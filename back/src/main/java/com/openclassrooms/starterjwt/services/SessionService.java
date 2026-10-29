@@ -27,7 +27,9 @@ public class SessionService {
     }
 
     public void delete(Long id) {
-        this.sessionRepository.deleteById(id);
+        Session session = this.getById(id);
+
+        this.sessionRepository.delete(session);
     }
 
     public List<Session> findAll() {
@@ -39,6 +41,11 @@ public class SessionService {
     }
 
     public Session update(Long id, Session session) {
+        // Vérifie que la session existe avant de l'enregistrer.
+        // Avant : un id inconnu faisait échouer l'enregistrement et renvoyait 401 (voir GlobalExceptionHandler) ;
+        // désormais NotFoundException renvoie 404.
+        this.getById(id);
+
         session.setId(id);
         return this.sessionRepository.save(session);
     }

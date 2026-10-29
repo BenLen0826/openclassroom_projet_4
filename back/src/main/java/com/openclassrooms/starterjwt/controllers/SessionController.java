@@ -64,10 +64,9 @@ public class SessionController {
         return ResponseEntity.ok().body(this.sessionMapper.toDto(session));
     }
 
+    // Précédemment nommée "save" alors qu'elle supprime la session.
     @DeleteMapping("{id}")
-    public ResponseEntity<?> save(@PathVariable("id") Long id) {
-        this.sessionService.getById(id);
-
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         this.sessionService.delete(id);
         return ResponseEntity.ok().build();
     }
