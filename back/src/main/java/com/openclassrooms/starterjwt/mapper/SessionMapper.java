@@ -25,6 +25,10 @@ public abstract class SessionMapper implements EntityMapper<SessionDto, Session>
     @Autowired
     UserService userService;
 
+    // teacherService.findById et userService.findById lèvent NotFoundException si l'id n'existe pas :
+    // créer ou modifier une session avec un teacher_id ou un id d'utilisateur inconnu renvoie donc 404.
+    // Avant : un teacher_id inconnu renvoyait 200 et enregistrait la session sans professeur (donnée incohérente),
+    // et un id d'utilisateur inconnu renvoyait 401 (voir GlobalExceptionHandler).
     @Mappings({
             @Mapping(source = "description", target = "description"),
             @Mapping(target = "teacher", expression = "java(sessionDto.getTeacher_id() != null ? this.teacherService.findById(sessionDto.getTeacher_id()) : null)"),
