@@ -5,12 +5,12 @@ import { SessionService } from '../../../../core/service/session.service';
 import { Session } from '../../../../core/models/session.interface';
 import { SessionApiService } from '../../../../core/service/session-api.service';
 import { MaterialModule } from "../../../../shared/material.module";
-import { CommonModule } from "@angular/common";
+import { AsyncPipe, DatePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
 @Component({
   selector: 'app-list',
-  imports: [CommonModule, MaterialModule, RouterModule],
+  imports: [AsyncPipe, DatePipe, MaterialModule, RouterModule],
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss']
 })
