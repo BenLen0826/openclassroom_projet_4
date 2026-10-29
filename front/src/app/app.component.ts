@@ -3,12 +3,12 @@ import {Router, RouterModule, RouterOutlet} from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from './core/service/auth.service';
 import { SessionService } from './core/service/session.service';
-import {CommonModule} from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import {MaterialModule} from "./shared/material.module";
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, MaterialModule, RouterOutlet, RouterModule],
+  imports: [AsyncPipe, MaterialModule, RouterOutlet, RouterModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
