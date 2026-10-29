@@ -34,7 +34,7 @@ export class MeComponent implements OnInit {
   public delete(): void {
     this.userService
       .delete(this.sessionService.sessionInformation!.id.toString())
-      .subscribe((_) => {
+      .subscribe(() => {
         this.matSnackBar.open("Your account has been deleted !", 'Close', { duration: 3000 });
         this.sessionService.logOut();
         this.router.navigate(['/']);
