@@ -1,6 +1,5 @@
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Teacher } from '../../../../core/models/teacher.interface';
@@ -27,7 +26,6 @@ export class DetailComponent implements OnInit {
   public userId: string;
 
   private route = inject(ActivatedRoute);
-  private fb = inject(FormBuilder);
   private sessionService = inject(SessionService);
   private sessionApiService = inject(SessionApiService);
   private teacherService = inject(TeacherService);
