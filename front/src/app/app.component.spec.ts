@@ -1,27 +1,55 @@
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { expect } from '@jest/globals';
+import { of } from 'rxjs';
 
 import { AppComponent } from './app.component';
+import { SessionService } from './core/service/session.service';
 
-
+// Test unitaire : SessionService est remplacé par un mock, on teste la logique de la classe
 describe('AppComponent', () => {
+  let component: AppComponent;
+  let router: Router;
+
+  const sessionServiceMock = {
+    $isLogged: jest.fn().mockReturnValue(of(false)), // renvoie un Observable qui émet false
+    logOut: jest.fn(),
+  };
+
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     await TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
         provideRouter([]),
-        provideHttpClient(),
-        provideHttpClientTesting()
+        { provide: SessionService, useValue: sessionServiceMock },
       ],
     }).compileComponents();
+
+    router = TestBed.inject(Router);
+    // spyOn : on espionne la méthode navigate du VRAI Router, sans vraiment naviguer
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    component = TestBed.createComponent(AppComponent).componentInstance;
   });
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(component).toBeTruthy();
+  });
+
+  it('$isLogged() should return the login state of SessionService', () => {
+    let value: boolean | undefined;
+    component.$isLogged().subscribe(isLogged => value = isLogged);
+
+    expect(sessionServiceMock.$isLogged).toHaveBeenCalled();
+    expect(value).toBe(false);
+  });
+
+  it('logout() should log out and redirect to the home page', () => {
+    component.logout();
+
+    expect(sessionServiceMock.logOut).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['']);
   });
 });
