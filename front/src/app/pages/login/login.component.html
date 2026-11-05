@@ -6,10 +6,10 @@
         <form class="login-form" [formGroup]="form" (ngSubmit)="submit()">
             <mat-card-content fxLayout="column">
                 <mat-form-field fxFlex>
-                    <input matInput placeholder="Email" formControlName="email">
+                    <input data-testid="login-email-field" matInput placeholder="Email" formControlName="email">
                 </mat-form-field>
                 <mat-form-field fxFlex>
-                    <input matInput [type]="hide ? 'password' : 'text'" placeholder="Password"
+                    <input data-testid="login-password-field" matInput [type]="hide ? 'password' : 'text'" placeholder="Password"
                         formControlName="password">
                     <!-- Valeur initiale : bouton sans type, donc "submit" par défaut. Comme c'est le premier bouton
                          du formulaire, la touche Entrée le "cliquait" : le mot de passe s'affichait au lieu de se connecter. -->
@@ -19,9 +19,9 @@
                     </button>
                 </mat-form-field>
             </mat-card-content>
-            <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Submit</button>
+            <button data-testid="login-submit-action" mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Submit</button>
             @if (onError) {
-                <p class="error">An error occurred</p>
+                <p data-testid="login-error-message" class="error">An error occurred</p>
             }
         </form>
     </mat-card>

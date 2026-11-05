@@ -6,21 +6,21 @@
         <form class="register-form" [formGroup]="form" (ngSubmit)="submit()">
             <mat-card-content fxLayout="column">
                 <mat-form-field fxFlex>
-                    <input matInput placeholder="First name" formControlName="firstName">
+                    <input data-testid="register-first-name-field" matInput placeholder="First name" formControlName="firstName">
                 </mat-form-field>
                 <mat-form-field fxFlex>
-                    <input matInput placeholder="Last name" formControlName="lastName">
+                    <input data-testid="register-last-name-field" matInput placeholder="Last name" formControlName="lastName">
                 </mat-form-field>
                 <mat-form-field fxFlex>
-                    <input matInput placeholder="Email" formControlName="email">
+                    <input data-testid="register-email-field" matInput placeholder="Email" formControlName="email">
                 </mat-form-field>
                 <mat-form-field fxFlex>
-                    <input matInput placeholder="Password" formControlName="password">
+                    <input data-testid="register-password-field" matInput placeholder="Password" formControlName="password">
                 </mat-form-field>
             </mat-card-content>
-            <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Submit</button>
+            <button data-testid="register-submit-action" mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Submit</button>
             @if (onError) {
-                <span class="error ml2">An error occurred</span>
+                <span data-testid="register-error-message" class="error ml2">An error occurred</span>
             }
         </form>
     </mat-card>

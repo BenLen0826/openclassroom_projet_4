@@ -2,7 +2,7 @@
   <mat-card>
     <mat-card-title>
       <div fxLayout="row" fxLayoutAlign="start center">
-        <button mat-icon-button (click)="back()">
+        <button data-testid="me-back-action" mat-icon-button (click)="back()">
           <mat-icon>arrow_back</mat-icon>
         </button>
         <h1>User information</h1>
@@ -11,14 +11,14 @@
     <mat-card-content>
       @if (user) {
         <div fxLayout="column" fxLayoutAlign="start center">
-          <p>Name: {{ user.firstName }} {{ user.lastName | uppercase }}</p>
-          <p>Email: {{ user.email }}</p>
+          <p data-testid="me-name-text">Name: {{ user.firstName }} {{ user.lastName | uppercase }}</p>
+          <p data-testid="me-email-text">Email: {{ user.email }}</p>
           @if (user.admin) {
-            <p class="my2">You are admin</p>
+            <p data-testid="me-admin-message" class="my2">You are admin</p>
           } @else {
             <div fxLayout="column" class="my2" fxLayoutAlign="center center">
               <p>Delete my account:</p>
-              <button mat-raised-button color="warn" (click)="delete()">
+              <button data-testid="me-delete-action" mat-raised-button color="warn" (click)="delete()">
                 <mat-icon>delete</mat-icon>
                 <!-- Valeur initiale : "Detail" (sans doute copié du bouton de la liste des sessions).
                      Trompeur pour un bouton qui supprime le compte : remplacé par "Delete". -->
@@ -28,8 +28,8 @@
           }
           <div fxLayoutAlign="space-between center" class="p2 w100">
 
-            <p><i>Create at: </i> {{ user.createdAt | date: 'longDate'}}</p>
-            <p><i>Last update: </i> {{ user.updatedAt| date: 'longDate'}}</p>
+            <p data-testid="me-created-at-text"><i>Create at: </i> {{ user.createdAt | date: 'longDate'}}</p>
+            <p data-testid="me-updated-at-text"><i>Last update: </i> {{ user.updatedAt| date: 'longDate'}}</p>
           </div>
         </div>
       }
