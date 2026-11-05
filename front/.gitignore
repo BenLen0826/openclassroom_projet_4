@@ -41,4 +41,11 @@ testem.log
 .DS_Store
 Thumbs.db
 
-**/.DS_Store 
+**/.DS_Store
+
+# Données brutes de couverture Cypress (régénérées à chaque lancement)
+.nyc_output/
+# Captures d'écran prises par Cypress quand un test échoue
+cypress/screenshots/
+# Téléchargements faits par le navigateur pendant les tests Cypress
+cypress/downloads/
