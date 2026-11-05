@@ -13,7 +13,9 @@ export class UnauthGuard implements CanActivate {
 
   public canActivate(): boolean {
     if (this.sessionService.isLogged) {
-      this.router.navigate(['rentals']);
+      // Valeur initiale : ['rentals'], une route qui n'existe pas dans l'application (→ page 404).
+      // Un utilisateur déjà connecté qui ouvre /login ou /register est maintenant renvoyé vers la liste des sessions.
+      this.router.navigate(['sessions']);
       return false;
     }
     return true;

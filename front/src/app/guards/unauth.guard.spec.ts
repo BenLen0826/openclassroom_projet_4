@@ -30,11 +30,10 @@ describe('UnauthGuard', () => {
     expect(routerMock.navigate).not.toHaveBeenCalled();
   });
 
-  it('should block access and redirect when the user is already logged in', () => {
+  it('should block access and redirect to the sessions list when the user is already logged in', () => {
     sessionServiceMock.isLogged = true;
 
     expect(guard.canActivate()).toBe(false);
-    // Le guard redirige actuellement vers 'rentals', une route qui n'existe pas (voir review-todo 2.1)
-    expect(routerMock.navigate).toHaveBeenCalledWith(['rentals']);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['sessions']);
   });
 });
