@@ -59,9 +59,21 @@ declare global {
        * @example cy.login('admin')
        */
       login(role?: 'admin' | 'user'): Chainable<void>;
+
+      /**
+       * Trouve le ou les éléments qui portent l'attribut data-testid donné.
+       * Les data-testid sont ajoutés dans les templates uniquement pour les tests : ils ne changent
+       * ni avec le texte affiché, ni avec la structure HTML ou les composants Material utilisés.
+       * @example cy.getByTestId('login-submit-action').click()
+       */
+      getByTestId(testId: string): Chainable<JQuery<HTMLElement>>;
     }
   }
 }
+
+Cypress.Commands.add('getByTestId', (testId: string) => {
+  return cy.get(`[data-testid=${testId}]`);
+});
 
 Cypress.Commands.add('login', (role: 'admin' | 'user' = 'user') => {
   // Réponses simulées du back : la connexion, puis la liste des sessions affichée juste après
@@ -69,9 +81,9 @@ Cypress.Commands.add('login', (role: 'admin' | 'user' = 'user') => {
   cy.intercept('GET', '/api/session', { fixture: 'sessions.json' }).as('sessions');
 
   cy.visit('/login');
-  cy.get('input[formControlName=email]').type('yoga@studio.com');
-  cy.get('input[formControlName=password]').type('test!1234');
-  cy.get('button[type=submit]').click();
+  cy.getByTestId('login-email-field').type('yoga@studio.com');
+  cy.getByTestId('login-password-field').type('test!1234');
+  cy.getByTestId('login-submit-action').click();
 
   cy.wait('@login');
   cy.url().should('include', '/sessions');

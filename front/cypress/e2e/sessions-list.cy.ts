@@ -1,33 +1,34 @@
 // Écran "Sessions" : liste des sessions (cypress/fixtures/sessions.json, renvoyée par cy.login).
+// Règle des sélecteurs : on localise avec data-testid (cy.getByTestId), on vérifie le contenu avec le texte.
 describe('Sessions list', () => {
+  // La carte d'une session, retrouvée par le nom de la session et non par sa position dans la liste
+  const sessionCard = (sessionName: string) =>
+    cy.getByTestId('list-session-item').filter(`:contains("${sessionName}")`);
+
   it('should display the sessions with the Create and Edit buttons for an admin', () => {
     cy.login('admin');
 
-    cy.get('mat-card.item').should('have.length', 2);
-    // Chaque carte est retrouvée par le nom de sa session, et non par sa position dans la liste
-    cy.contains('mat-card.item', 'Yoga du matin')
+    cy.getByTestId('list-session-item').should('have.length', 2);
+    sessionCard('Yoga du matin')
       .should('contain', 'Session on November 10, 2026')
       .and('contain', 'Séance douce pour bien commencer la journée');
-    cy.contains('mat-card.item', 'Yoga du soir')
+    sessionCard('Yoga du soir')
       .should('contain', 'Session on November 12, 2026')
       .and('contain', 'Séance relaxante pour finir la journée');
 
-    cy.contains('button', 'Create').should('be.visible');
-    cy.get('mat-card.item').each(card => {
-      cy.wrap(card).contains('button', 'Detail').should('be.visible');
-      cy.wrap(card).contains('button', 'Edit').should('be.visible');
-    });
+    cy.getByTestId('list-create-action').should('be.visible');
+    // Chaque carte a un bouton Detail et un bouton Edit
+    cy.getByTestId('list-session-detail-action').should('have.length', 2);
+    cy.getByTestId('list-session-edit-action').should('have.length', 2);
   });
 
   it('should only display the Detail buttons for a non-admin user', () => {
     cy.login('user');
 
-    cy.get('mat-card.item').should('have.length', 2);
-    cy.contains('button', 'Create').should('not.exist');
-    cy.contains('button', 'Edit').should('not.exist');
-    cy.get('mat-card.item').each(card => {
-      cy.wrap(card).contains('button', 'Detail').should('be.visible');
-    });
+    cy.getByTestId('list-session-item').should('have.length', 2);
+    cy.getByTestId('list-session-detail-action').should('have.length', 2);
+    cy.getByTestId('list-create-action').should('not.exist');
+    cy.getByTestId('list-session-edit-action').should('not.exist');
   });
 
   it('should send a visitor who is not logged in to the login page', () => {
