@@ -9,14 +9,16 @@ describe('Session form', () => {
 
   // Remplit les champs donnés (on peut en omettre pour tester les champs obligatoires)
   const fillForm = (fields: Partial<typeof newSession>): void => {
-    if (fields.name) cy.get('input[formControlName=name]').type(fields.name);
-    if (fields.date) cy.get('input[formControlName=date]').type(fields.date);
-    if (fields.teacher) {
-      // Liste déroulante Material : on l'ouvre, puis on clique sur l'option
-      cy.get('mat-select[formControlName=teacher_id]').click();
-      cy.contains('mat-option', fields.teacher).click();
-    }
-    if (fields.description) cy.get('textarea[formControlName=description]').type(fields.description);
+    Object.entries(fields).forEach(([name, value]) => {
+      if (name === 'teacher') {
+        // Seul cas particulier : la liste déroulante Material, qu'on ouvre puis dont on clique l'option
+        cy.get('mat-select[formControlName=teacher_id]').click();
+        cy.contains('mat-option', value).click();
+      } else {
+        // name, date, description : on tape dans le champ (input, input date ou textarea)
+        cy.get(`[formControlName=${name}]`).type(value);
+      }
+    });
   };
 
   beforeEach(() => {
