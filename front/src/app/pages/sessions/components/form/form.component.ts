@@ -2,7 +2,7 @@ import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SessionService } from '../../../../core/service/session.service';
 import { TeacherService } from '../../../../core/service/teacher.service';
 import { Session } from '../../../../core/models/session.interface';
@@ -19,7 +19,9 @@ interface SessionForm {
 
 @Component({
   selector: 'app-form',
-  imports: [AsyncPipe, MaterialModule],
+  // Valeur initiale : [AsyncPipe, MaterialModule], sans RouterLink. Angular ignorait alors l'attribut
+  // routerLink="/sessions" du template : le bouton retour ne faisait rien.
+  imports: [AsyncPipe, MaterialModule, RouterLink],
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss']
 })
