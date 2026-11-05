@@ -10,6 +10,7 @@ import { Session } from '../../../../core/models/session.interface';
 import { SessionInformation } from '../../../../core/models/sessionInformation.interface';
 import { Teacher } from '../../../../core/models/teacher.interface';
 import { SessionService } from '../../../../core/service/session.service';
+import { getByTestId, queryByTestId } from '../../../../../testing/test-id';
 import { DetailComponent } from './detail.component';
 
 // Test d'intégration : vrai composant + vrai template + vrais SessionApiService, TeacherService
@@ -48,12 +49,11 @@ describe('DetailComponent (integration)', () => {
     admin,
   });
 
-  const pageText = (): string => fixture.nativeElement.textContent;
+  // Texte affiché dans l'élément qui porte ce data-testid
+  const textOf = (testId: string): string => getByTestId(fixture, testId).textContent!.trim();
 
-  // Trouve un bouton d'après son texte (ex : 'Delete', 'Participate')
-  const button = (label: string): HTMLButtonElement | undefined =>
-    Array.from(fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>)
-      .find(b => b.textContent!.trim().endsWith(label));
+  // Bouton d'action retrouvé par son data-testid (ex : 'detail-delete-action'), ou null s'il n'est pas affiché
+  const button = (testId: string): HTMLButtonElement | null => queryByTestId<HTMLButtonElement>(fixture, testId);
 
   // Le "back" répond aux deux requêtes enchaînées : la session, PUIS son professeur
   const respondWithSession = (sessionFromBack: Session): void => {
@@ -95,27 +95,27 @@ describe('DetailComponent (integration)', () => {
   it('should display the session information', () => {
     createComponentAs(false);
 
-    expect(pageText()).toContain('Yoga Du Matin');            // pipe titlecase
-    expect(pageText()).toContain('Margot DELAHAYE');          // professeur, nom en majuscules
-    expect(pageText()).toContain('2 attendees');              // users.length
-    expect(pageText()).toContain('November 10, 2026');        // date de la session
-    expect(pageText()).toContain('Séance douce pour bien commencer la journée');
-    expect(pageText()).toContain('October 1, 2026');          // createdAt
-    expect(pageText()).toContain('October 15, 2026');         // updatedAt
+    expect(textOf('detail-name-text')).toBe('Yoga Du Matin');                 // pipe titlecase
+    expect(textOf('detail-teacher-text')).toBe('Margot DELAHAYE');            // professeur, nom en majuscules
+    expect(textOf('detail-attendees-text')).toBe('2 attendees');              // users.length
+    expect(textOf('detail-date-text')).toBe('November 10, 2026');             // date de la session
+    expect(textOf('detail-description-text')).toContain('Séance douce pour bien commencer la journée');
+    expect(textOf('detail-created-at-text')).toContain('October 1, 2026');    // createdAt
+    expect(textOf('detail-updated-at-text')).toContain('October 15, 2026');   // updatedAt
   });
 
   it('should display the Delete button, and no participation button, for an admin', () => {
     createComponentAs(true);
 
-    expect(button('Delete')).toBeDefined();
-    expect(button('Participate')).toBeUndefined();
-    expect(button('Do not participate')).toBeUndefined();
+    expect(button('detail-delete-action')).not.toBeNull();
+    expect(button('detail-participate-action')).toBeNull();
+    expect(button('detail-unparticipate-action')).toBeNull();
   });
 
   it('should not display the Delete button for a non-admin user', () => {
     createComponentAs(false);
 
-    expect(button('Delete')).toBeUndefined();
+    expect(button('detail-delete-action')).toBeNull();
   });
 
   it('should delete the session and go back to the list when the admin clicks on Delete', () => {
@@ -123,7 +123,7 @@ describe('DetailComponent (integration)', () => {
     const snackBarOpen = jest.spyOn(fixture.debugElement.injector.get(MatSnackBar), 'open')
       .mockReturnValue({} as ReturnType<MatSnackBar['open']>);
 
-    button('Delete')!.click();
+    getByTestId(fixture, 'detail-delete-action').click();
 
     const req = httpMock.expectOne('api/session/1');
     expect(req.request.method).toBe('DELETE');
@@ -135,9 +135,9 @@ describe('DetailComponent (integration)', () => {
 
   it('should let a non-admin user participate, then show "Do not participate"', () => {
     createComponentAs(false); // users = [4, 5] : l'utilisateur 3 ne participe pas
-    expect(button('Do not participate')).toBeUndefined();
+    expect(button('detail-unparticipate-action')).toBeNull();
 
-    button('Participate')!.click();
+    getByTestId(fixture, 'detail-participate-action').click();
 
     const req = httpMock.expectOne('api/session/1/participate/3');
     expect(req.request.method).toBe('POST');
@@ -145,22 +145,23 @@ describe('DetailComponent (integration)', () => {
     // Le composant recharge la session : le back renvoie maintenant l'utilisateur 3 dans users
     respondWithSession({ ...session, users: [4, 5, 3] });
 
-    expect(button('Do not participate')).toBeDefined();
-    expect(pageText()).toContain('3 attendees');
+    expect(button('detail-unparticipate-action')).not.toBeNull();
+    expect(button('detail-participate-action')).toBeNull();
+    expect(textOf('detail-attendees-text')).toBe('3 attendees');
   });
 
   it('should let a participating user cancel, then show "Participate" again', () => {
     createComponentAs(false, { ...session, users: [3, 4, 5] });
 
-    button('Do not participate')!.click();
+    getByTestId(fixture, 'detail-unparticipate-action').click();
 
     const req = httpMock.expectOne('api/session/1/participate/3');
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
     respondWithSession(session);
 
-    expect(button('Do not participate')).toBeUndefined();
-    expect(button('Participate')).toBeDefined();
-    expect(pageText()).toContain('2 attendees');
+    expect(button('detail-unparticipate-action')).toBeNull();
+    expect(button('detail-participate-action')).not.toBeNull();
+    expect(textOf('detail-attendees-text')).toBe('2 attendees');
   });
 });

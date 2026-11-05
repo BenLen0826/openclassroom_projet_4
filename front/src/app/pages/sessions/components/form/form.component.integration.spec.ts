@@ -10,6 +10,7 @@ import { Session } from '../../../../core/models/session.interface';
 import { SessionInformation } from '../../../../core/models/sessionInformation.interface';
 import { Teacher } from '../../../../core/models/teacher.interface';
 import { SessionService } from '../../../../core/service/session.service';
+import { getByTestId, queryAllByTestId } from '../../../../../testing/test-id';
 import { FormComponent } from './form.component';
 
 // Test d'intégration : vrai composant + vrai template + vrais SessionApiService, TeacherService
@@ -45,35 +46,38 @@ describe('FormComponent (integration)', () => {
   };
 
   // --- Aides pour manipuler le DOM ---
-  const field = (name: string): HTMLInputElement | HTMLTextAreaElement =>
-    fixture.nativeElement.querySelector(`[formControlName="${name}"]`);
+  // Champ texte du formulaire, retrouvé par son data-testid "form-<name>-field" (ex : form-name-field)
+  type TextField = 'name' | 'date' | 'description';
+  const field = (name: TextField): HTMLInputElement | HTMLTextAreaElement =>
+    getByTestId<HTMLInputElement | HTMLTextAreaElement>(fixture, `form-${name}-field`);
 
-  const type = (name: string, value: string): void => {
+  const type = (name: TextField, value: string): void => {
     field(name).value = value;
     field(name).dispatchEvent(new Event('input'));
     fixture.detectChanges();
   };
 
-  const leave = (name: string): void => {
+  const leave = (name: TextField): void => {
     field(name).dispatchEvent(new Event('blur'));
     fixture.detectChanges();
   };
 
   // Ouvre la liste déroulante Material puis clique sur l'option du professeur
-  const selectTeacher = (label: string): void => {
-    fixture.nativeElement.querySelector('mat-select .mat-mdc-select-trigger').click();
+  // (avant : clic sur .mat-mdc-select-trigger, une classe INTERNE de Material ; le data-testid suffit)
+  const selectTeacher = (teacherName: string): void => {
+    getByTestId(fixture, 'form-teacher-field').click();
     fixture.detectChanges();
-    // Les options s'affichent dans un calque ajouté à la fin du <body>, hors du composant
-    const option = Array.from(document.querySelectorAll('mat-option') as NodeListOf<HTMLElement>)
-      .find(o => o.textContent!.trim() === label)!;
+    // Les options s'affichent dans un calque ajouté à la fin du <body>, hors du composant : on cherche dans "document".
+    // L'option est filtrée par le nom du professeur (une donnée, pas un libellé du template).
+    const option = queryAllByTestId(document, 'form-teacher-option')
+      .find(o => o.textContent!.trim() === teacherName)!;
     option.click();
     fixture.detectChanges();
   };
 
-  const saveButton = (): HTMLButtonElement =>
-    fixture.nativeElement.querySelector('button[type="submit"]');
+  const saveButton = (): HTMLButtonElement => getByTestId<HTMLButtonElement>(fixture, 'form-save-action');
 
-  const title = (): string => fixture.nativeElement.querySelector('h1').textContent.trim();
+  const title = (): string => getByTestId(fixture, 'form-title-text').textContent!.trim();
 
   // Crée le composant pour une URL donnée (création ou modification)
   const createComponentAt = (url: string): void => {
@@ -164,7 +168,8 @@ describe('FormComponent (integration)', () => {
     });
 
     it('should highlight a required field in error when it is left empty', () => {
-      const nameField = (): HTMLElement => fixture.nativeElement.querySelectorAll('mat-form-field')[0];
+      // Champ retrouvé par son data-testid, puis son cadre Material, dont on vérifie l'affichage d'erreur
+      const nameField = (): HTMLElement => field('name').closest('mat-form-field')!;
 
       leave('name');
 
@@ -193,7 +198,7 @@ describe('FormComponent (integration)', () => {
       expect(field('name').value).toBe('Yoga du matin');
       expect(field('date').value).toBe('2026-11-10');
       expect(field('description').value).toBe('Séance douce');
-      expect(fixture.nativeElement.querySelector('mat-select').textContent).toContain('Margot DELAHAYE');
+      expect(getByTestId(fixture, 'form-teacher-field').textContent).toContain('Margot DELAHAYE');
     });
 
     it('should update the session and go back to the list', () => {

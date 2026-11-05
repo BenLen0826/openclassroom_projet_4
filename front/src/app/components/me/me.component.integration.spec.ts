@@ -9,6 +9,7 @@ import { expect } from '@jest/globals';
 import { SessionInformation } from '../../core/models/sessionInformation.interface';
 import { User } from '../../core/models/user.interface';
 import { SessionService } from '../../core/service/session.service';
+import { getByTestId, queryByTestId } from '../../../testing/test-id';
 import { MeComponent } from './me.component';
 
 // Test d'intégration : vrai composant + vrai template + vrais UserService et SessionService.
@@ -40,8 +41,8 @@ describe('MeComponent (integration)', () => {
     updatedAt: new Date('2026-02-20'),
   };
 
-  // Texte visible de la page
-  const pageText = (): string => fixture.nativeElement.textContent;
+  // Texte affiché dans l'élément qui porte ce data-testid
+  const textOf = (testId: string): string => getByTestId(fixture, testId).textContent!;
 
   // Crée le composant et répond à la requête GET api/user/1 lancée par ngOnInit
   const createComponentWith = (userFromBack: User): void => {
@@ -76,25 +77,24 @@ describe('MeComponent (integration)', () => {
   it('should display the user information', () => {
     createComponentWith(user);
 
-    expect(pageText()).toContain('Name: Toto TEST'); // le nom de famille passe en majuscules
-    expect(pageText()).toContain('Email: toto@test.com');
-    expect(pageText()).toContain('January 15, 2026');
-    expect(pageText()).toContain('February 20, 2026');
+    expect(textOf('me-name-text')).toContain('Toto TEST'); // le nom de famille passe en majuscules
+    expect(textOf('me-email-text')).toContain('toto@test.com');
+    expect(textOf('me-created-at-text')).toContain('January 15, 2026');
+    expect(textOf('me-updated-at-text')).toContain('February 20, 2026');
   });
 
   it('should display "You are admin" and no delete button for an admin', () => {
     createComponentWith({ ...user, admin: true }); // copie de user avec admin à true
 
-    expect(pageText()).toContain('You are admin');
-    expect(fixture.nativeElement.querySelector('button[color="warn"]')).toBeNull();
+    expect(queryByTestId(fixture, 'me-admin-message')).not.toBeNull();
+    expect(queryByTestId(fixture, 'me-delete-action')).toBeNull();
   });
 
   it('should display the delete button for a non-admin user', () => {
     createComponentWith(user);
 
-    expect(pageText()).not.toContain('You are admin');
-    expect(pageText()).toContain('Delete my account');
-    expect(fixture.nativeElement.querySelector('button[color="warn"]')).not.toBeNull();
+    expect(queryByTestId(fixture, 'me-admin-message')).toBeNull();
+    expect(queryByTestId(fixture, 'me-delete-action')).not.toBeNull();
   });
 
   it('should delete the account and log out when clicking on the delete button', () => {
@@ -104,7 +104,7 @@ describe('MeComponent (integration)', () => {
     const snackBarOpen = jest.spyOn(fixture.debugElement.injector.get(MatSnackBar), 'open')
       .mockReturnValue({} as ReturnType<MatSnackBar['open']>);
 
-    fixture.nativeElement.querySelector('button[color="warn"]').click();
+    getByTestId(fixture, 'me-delete-action').click();
 
     const req = httpMock.expectOne('api/user/1');
     expect(req.request.method).toBe('DELETE');

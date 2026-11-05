@@ -7,6 +7,7 @@ import { expect } from '@jest/globals';
 
 import { SessionInformation } from '../../core/models/sessionInformation.interface';
 import { SessionService } from '../../core/service/session.service';
+import { getByTestId, queryByTestId } from '../../../testing/test-id';
 import { LoginComponent } from './login.component';
 
 // Test d'intégration : vrai composant + vrai template + vrais AuthService et SessionService.
@@ -28,24 +29,24 @@ describe('LoginComponent (integration)', () => {
   };
 
   // --- Petites aides pour manipuler le DOM ---
-  const input = (name: string): HTMLInputElement =>
-    fixture.nativeElement.querySelector(`input[formControlName="${name}"]`);
+  // Champ du formulaire, retrouvé par son data-testid "login-<name>-field" (ex : login-email-field)
+  const input = (name: 'email' | 'password'): HTMLInputElement =>
+    getByTestId<HTMLInputElement>(fixture, `login-${name}-field`);
 
   // Simule la saisie de l'utilisateur dans un champ
-  const type = (name: string, value: string): void => {
+  const type = (name: 'email' | 'password', value: string): void => {
     input(name).value = value;
     input(name).dispatchEvent(new Event('input')); // prévient Angular qu'on a tapé
     fixture.detectChanges();
   };
 
   // Simule le fait de quitter un champ (le champ devient "touched")
-  const leave = (name: string): void => {
+  const leave = (name: 'email' | 'password'): void => {
     input(name).dispatchEvent(new Event('blur'));
     fixture.detectChanges();
   };
 
-  const submitButton = (): HTMLButtonElement =>
-    fixture.nativeElement.querySelector('button[type="submit"]');
+  const submitButton = (): HTMLButtonElement => getByTestId<HTMLButtonElement>(fixture, 'login-submit-action');
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -98,13 +99,13 @@ describe('LoginComponent (integration)', () => {
       .flush('Bad credentials', { status: 401, statusText: 'Unauthorized' });
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.error').textContent).toContain('An error occurred');
+    expect(getByTestId(fixture, 'login-error-message').textContent).toContain('An error occurred');
     expect(sessionService.isLogged).toBe(false);
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
   it('should not display the error message before any submit', () => {
-    expect(fixture.nativeElement.querySelector('.error')).toBeNull();
+    expect(queryByTestId(fixture, 'login-error-message')).toBeNull();
   });
 
   it('should disable the submit button while a required field is missing', () => {
@@ -118,7 +119,9 @@ describe('LoginComponent (integration)', () => {
   });
 
   it('should highlight a required field in error when it is left empty', () => {
-    const emailField = (): HTMLElement => fixture.nativeElement.querySelectorAll('mat-form-field')[0];
+    // Le champ est retrouvé par son data-testid ; on remonte ensuite à son cadre Material (mat-form-field),
+    // car c'est l'affichage d'erreur de Material (classe mat-form-field-invalid) que l'on vérifie ici.
+    const emailField = (): HTMLElement => input('email').closest('mat-form-field')!;
     expect(emailField().classList).not.toContain('mat-form-field-invalid'); // pas encore touché
 
     leave('email'); // l'utilisateur clique dans le champ puis en sort sans rien taper

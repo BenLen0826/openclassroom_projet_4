@@ -5,6 +5,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
 import { expect } from '@jest/globals';
 
+import { getByTestId } from '../../../testing/test-id';
 import { RegisterComponent } from './register.component';
 
 // Test d'intégration : vrai composant + vrai template + vrai AuthService.
@@ -14,22 +15,29 @@ describe('RegisterComponent (integration)', () => {
   let httpMock: HttpTestingController;
   let router: Router;
 
-  const input = (name: string): HTMLInputElement =>
-    fixture.nativeElement.querySelector(`input[formControlName="${name}"]`);
+  // data-testid de chaque champ du formulaire
+  type Field = 'firstName' | 'lastName' | 'email' | 'password';
+  const fieldTestIds: Record<Field, string> = {
+    firstName: 'register-first-name-field',
+    lastName: 'register-last-name-field',
+    email: 'register-email-field',
+    password: 'register-password-field',
+  };
 
-  const type = (name: string, value: string): void => {
+  const input = (name: Field): HTMLInputElement => getByTestId<HTMLInputElement>(fixture, fieldTestIds[name]);
+
+  const type = (name: Field, value: string): void => {
     input(name).value = value;
     input(name).dispatchEvent(new Event('input'));
     fixture.detectChanges();
   };
 
-  const leave = (name: string): void => {
+  const leave = (name: Field): void => {
     input(name).dispatchEvent(new Event('blur'));
     fixture.detectChanges();
   };
 
-  const submitButton = (): HTMLButtonElement =>
-    fixture.nativeElement.querySelector('button[type="submit"]');
+  const submitButton = (): HTMLButtonElement => getByTestId<HTMLButtonElement>(fixture, 'register-submit-action');
 
   const fillForm = (): void => {
     type('firstName', 'Toto');
@@ -88,14 +96,14 @@ describe('RegisterComponent (integration)', () => {
       .flush('Email already taken', { status: 400, statusText: 'Bad Request' });
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.error').textContent).toContain('An error occurred');
+    expect(getByTestId(fixture, 'register-error-message').textContent).toContain('An error occurred');
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
   // it.each : le même test lancé une fois par champ obligatoire
-  it.each(['firstName', 'lastName', 'email', 'password'])(
+  it.each<Field>(['firstName', 'lastName', 'email', 'password'])(
     'should disable the submit button when %s is missing',
-    (missingField: string) => {
+    (missingField: Field) => {
       fillForm();
       type(missingField, ''); // on vide un seul champ
 
@@ -104,7 +112,8 @@ describe('RegisterComponent (integration)', () => {
   );
 
   it('should highlight a required field in error when it is left empty', () => {
-    const firstNameField = (): HTMLElement => fixture.nativeElement.querySelectorAll('mat-form-field')[0];
+    // Champ retrouvé par son data-testid, puis son cadre Material, dont on vérifie l'affichage d'erreur
+    const firstNameField = (): HTMLElement => input('firstName').closest('mat-form-field')!;
 
     leave('firstName');
 

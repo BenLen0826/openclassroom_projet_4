@@ -7,6 +7,7 @@ import { expect } from '@jest/globals';
 import { Session } from '../../../../core/models/session.interface';
 import { SessionInformation } from '../../../../core/models/sessionInformation.interface';
 import { SessionService } from '../../../../core/service/session.service';
+import { queryAllByTestId } from '../../../../../testing/test-id';
 import { ListComponent } from './list.component';
 
 // Test d'intégration : vrai composant + vrai template + vrais SessionApiService et SessionService.
@@ -44,10 +45,13 @@ describe('ListComponent (integration)', () => {
     admin,
   });
 
-  // Textes des boutons de la page (ex : ['Create', 'Detail', 'Edit', ...])
-  const buttonLabels = (): string[] =>
-    Array.from(fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLElement>)
-      .map(button => button.querySelector('.ml1')!.textContent!.trim());
+  // data-testid des boutons de la page, dans l'ordre (ex : ['list-create-action', 'list-session-detail-action', ...]).
+  // On compare les data-testid et non les textes : renommer un bouton ne doit pas casser ces tests.
+  const buttons = (): string[] =>
+    Array.from(fixture.nativeElement.querySelectorAll('button[data-testid]') as NodeListOf<HTMLElement>)
+      .map(button => button.dataset['testid']!);
+
+  const cards = (): HTMLElement[] => queryAllByTestId(fixture, 'list-session-item');
 
   // Connecte l'utilisateur, affiche la page et répond à GET api/session
   const createComponentAs = (admin: boolean): void => {
@@ -75,24 +79,28 @@ describe('ListComponent (integration)', () => {
   it('should display the list of sessions', () => {
     createComponentAs(false);
 
-    const cards = fixture.nativeElement.querySelectorAll('mat-card.item');
-    expect(cards.length).toBe(2);
-    expect(cards[0].textContent).toContain('Yoga du matin');
-    expect(cards[0].textContent).toContain('Session on November 10, 2026');
-    expect(cards[0].textContent).toContain('Séance douce pour bien commencer la journée');
-    expect(cards[1].textContent).toContain('Yoga du soir');
+    const sessionCards = cards();
+    expect(sessionCards.length).toBe(2);
+    expect(sessionCards[0].textContent).toContain('Yoga du matin');
+    expect(sessionCards[0].textContent).toContain('Session on November 10, 2026');
+    expect(sessionCards[0].textContent).toContain('Séance douce pour bien commencer la journée');
+    expect(sessionCards[1].textContent).toContain('Yoga du soir');
   });
 
   it('should display the Create button and an Edit button per session for an admin', () => {
     createComponentAs(true);
 
-    expect(buttonLabels()).toEqual(['Create', 'Detail', 'Edit', 'Detail', 'Edit']);
+    expect(buttons()).toEqual([
+      'list-create-action',
+      'list-session-detail-action', 'list-session-edit-action',
+      'list-session-detail-action', 'list-session-edit-action',
+    ]);
   });
 
   it('should only display the Detail buttons for a non-admin user', () => {
     createComponentAs(false);
 
-    expect(buttonLabels()).toEqual(['Detail', 'Detail']);
+    expect(buttons()).toEqual(['list-session-detail-action', 'list-session-detail-action']);
   });
 
   it('should display no session card when there is no session', () => {
@@ -102,6 +110,6 @@ describe('ListComponent (integration)', () => {
     httpMock.expectOne('api/session').flush([]);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelectorAll('mat-card.item').length).toBe(0);
+    expect(cards().length).toBe(0);
   });
 });
