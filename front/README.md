@@ -8,9 +8,9 @@ Git clone:
 
 > git clone https://github.com/OpenClassrooms-Student-Center/P5-Full-Stack-testing
 
-Go inside folder:
+Go inside the front-end folder (from the repository root):
 
-> cd yoga
+> cd front
 
 Install dependencies:
 
@@ -23,26 +23,50 @@ Launch Front-end:
 
 ### Test
 
-#### E2E
+Tests are organised in three levels:
 
-Launching e2e test:
+| Level | Files | Tool |
+|---|---|---|
+| Unit (dependencies mocked) | `src/**/*.spec.ts` | Jest |
+| Integration (real component + template + services, HTTP back-end simulated) | `src/**/*.integration.spec.ts` | Jest |
+| End-to-end (one file per screen, back-end stubbed with `cy.intercept`) | `cypress/e2e/*.cy.ts` | Cypress |
+
+Elements used by tests carry a `data-testid` attribute named `screen-subject-type`
+(types: `action`, `field`, `option`, `text`, `message`, `item`), e.g. `login-submit-action`.
+Add one when you add an element a test needs to find.
+
+#### Unit and integration tests (Jest)
+
+> npm run test
+
+With coverage (fails if any indicator is below 80 %):
+
+> npm run test:coverage
+
+Reports: `front/coverage/jest/lcov-report/index.html` (coverage) and `front/coverage/jest/test-report.html` (results).
+
+Watch mode:
+
+> npm run test:watch
+
+Only integration tests: `npx jest integration` · one file: `npx jest login` · one test: `npx jest login -t "wrong login"`
+
+#### E2E (Cypress)
+
+Stop `npm run start` first (Cypress serves the application on port 4200). The back-end does not need to run.
+
+Interactive mode:
 
 > npm run e2e
 
-Generate coverage report (you should launch e2e test before):
+Headless mode (all tests, in the terminal):
+
+> npm run e2e:ci
+
+Generate coverage report (after a full e2e run):
 
 > npm run e2e:coverage
 
 Report is available here:
 
 > front/coverage/lcov-report/index.html
-
-#### Unitary test
-
-Launching test:
-
-> npm run test
-
-for following change:
-
-> npm run test:watch
