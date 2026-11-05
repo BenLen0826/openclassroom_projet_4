@@ -1,27 +1,71 @@
-describe('Login spec', () => {
-  it('Login successfull', () => {
-    cy.visit('/login')
+// Écran "Login" : connexion.
+// Le back est simulé avec cy.intercept et les fixtures (cypress/fixtures).
+describe('Login', () => {
+  const credentials = { email: 'yoga@studio.com', password: 'test!1234' };
 
-    cy.intercept('POST', '/api/auth/login', {
-      body: {
-        id: 1,
-        username: 'userName',
-        firstName: 'firstName',
-        lastName: 'lastName',
-        admin: true
-      },
-    })
+  beforeEach(() => {
+    // Après une connexion réussie, l'application affiche la liste des sessions
+    cy.intercept('GET', '/api/session', { fixture: 'sessions.json' }).as('sessions');
+    cy.visit('/login');
+  });
 
-    cy.intercept(
-      {
-        method: 'GET',
-        url: '/api/session',
-      },
-      []).as('session')
+  it('should log in and display the sessions page', () => {
+    cy.intercept('POST', '/api/auth/login', { fixture: 'user.json' }).as('login');
 
-    cy.get('input[formControlName=email]').type("yoga@studio.com")
-    cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
+    cy.get('input[formControlName=email]').type(credentials.email);
+    cy.get('input[formControlName=password]').type(credentials.password);
+    cy.get('button[type=submit]').click();
 
-    cy.url().should('include', '/sessions')
-  })
+    // Le front envoie bien au back l'email et le mot de passe saisis
+    cy.wait('@login').its('request.body').should('deep.equal', credentials);
+    cy.url().should('include', '/sessions');
+    // La barre du haut affiche maintenant le menu d'un utilisateur connecté
+    cy.get('mat-toolbar').should('contain', 'Sessions').and('contain', 'Account').and('contain', 'Logout');
+  });
+
+  it('should log in when the user presses Enter in the password field', () => {
+    // Vérifie la correction du bouton "œil" : avant, Entrée affichait le mot de passe au lieu de se connecter
+    cy.intercept('POST', '/api/auth/login', { fixture: 'user.json' }).as('login');
+
+    cy.get('input[formControlName=email]').type(credentials.email);
+    cy.get('input[formControlName=password]').type(`${credentials.password}{enter}`);
+
+    cy.wait('@login');
+    cy.url().should('include', '/sessions');
+  });
+
+  it('should display an error and stay on the page with wrong credentials', () => {
+    cy.intercept('POST', '/api/auth/login', { statusCode: 401 }).as('login');
+
+    cy.get('input[formControlName=email]').type(credentials.email);
+    cy.get('input[formControlName=password]').type('wrong-password');
+    cy.get('button[type=submit]').click();
+
+    cy.wait('@login');
+    cy.contains('An error occurred').should('be.visible');
+    cy.url().should('include', '/login');
+  });
+
+  it('should disable the Submit button when the email is missing', () => {
+    cy.get('input[formControlName=password]').type(credentials.password);
+
+    cy.get('button[type=submit]').should('be.disabled');
+  });
+
+  it('should disable the Submit button when the password is missing', () => {
+    cy.get('input[formControlName=email]').type(credentials.email);
+
+    cy.get('button[type=submit]').should('be.disabled');
+  });
+
+  it('should send a logged user back to the sessions page when he returns to the login page', () => {
+    cy.login();
+
+    // Bouton "précédent" du navigateur : retour sur /login SANS recharger la page (l'utilisateur reste connecté)
+    cy.go('back');
+
+    // UnauthGuard le renvoie vers la liste des sessions
+    cy.url().should('include', '/sessions');
+    cy.get('mat-card.item').should('have.length', 2);
+  });
 });
