@@ -37,8 +37,8 @@ describe('MeComponent (integration)', () => {
     firstName: 'Toto',
     admin: false,
     password: 'test!1234',
-    createdAt: new Date('2026-01-15'),
-    updatedAt: new Date('2026-02-20'),
+    createdAt: new Date('2026-01-15T12:00:00Z'), // midi UTC : même date affichée quel que soit le fuseau horaire
+    updatedAt: new Date('2026-02-20T12:00:00Z'),
   };
 
   // Texte affiché dans l'élément qui porte ce data-testid

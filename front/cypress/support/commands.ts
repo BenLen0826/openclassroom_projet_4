@@ -72,7 +72,8 @@ declare global {
 }
 
 Cypress.Commands.add('getByTestId', (testId: string) => {
-  return cy.get(`[data-testid=${testId}]`);
+  // Valeur entre guillemets : le sélecteur reste valide même si le nom contient un point, un espace ou commence par un chiffre
+  return cy.get(`[data-testid="${testId}"]`);
 });
 
 Cypress.Commands.add('login', (role: 'admin' | 'user' = 'user') => {
@@ -81,7 +82,10 @@ Cypress.Commands.add('login', (role: 'admin' | 'user' = 'user') => {
   cy.intercept('GET', '/api/session', { fixture: 'sessions.json' }).as('sessions');
 
   cy.visit('/login');
-  cy.getByTestId('login-email-field').type('yoga@studio.com');
+  // L'email tapé est celui de la fixture (admin.json ou user.json) : ce qu'on saisit et ce que "répond le back" restent cohérents
+  cy.fixture<{ username: string }>(`${role}.json`).then(user => {
+    cy.getByTestId('login-email-field').type(user.username);
+  });
   cy.getByTestId('login-password-field').type('test!1234');
   cy.getByTestId('login-submit-action').click();
 

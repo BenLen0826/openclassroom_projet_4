@@ -13,7 +13,7 @@
     "id": 2,
     "name": "Yoga du soir",
     "description": "Séance relaxante pour finir la journée",
-    "date": "2026-11-12T18:00:00.000Z",
+    "date": "2026-11-12T12:00:00.000Z",
     "teacher_id": 2,
     "users": [2],
     "createdAt": "2026-10-02T10:00:00.000Z",

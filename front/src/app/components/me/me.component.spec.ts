@@ -71,13 +71,21 @@ describe('MeComponent', () => {
     expect(component.user).toEqual(user);
   });
 
-  it('back() should go to the previous page', () => {
-    // mockImplementation : on remplace le vrai comportement (sinon jsdom changerait de page)
-    const historyBack = jest.spyOn(window.history, 'back').mockImplementation(() => {});
+  describe('back()', () => {
+    let historyBack: jest.SpyInstance;
 
-    component.back();
+    // window.history est un objet GLOBAL, partagé par tous les tests : on remet la vraie méthode back()
+    // après le test, pour qu'il ne reste pas espionné dans les tests suivants
+    afterEach(() => historyBack.mockRestore());
 
-    expect(historyBack).toHaveBeenCalled();
+    it('should go to the previous page', () => {
+      // mockImplementation : on remplace le vrai comportement (sinon jsdom changerait de page)
+      historyBack = jest.spyOn(window.history, 'back').mockImplementation(() => {});
+
+      component.back();
+
+      expect(historyBack).toHaveBeenCalled();
+    });
   });
 
   it('delete() should delete the account, show a message, log out and redirect', () => {
