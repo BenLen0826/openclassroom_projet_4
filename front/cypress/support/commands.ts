@@ -41,3 +41,41 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+// ***********************************************
+// Commandes du projet
+// ***********************************************
+
+// Déclare la commande pour TypeScript (autocomplétion et vérification de type dans les tests)
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Cypress {
+    interface Chainable {
+      /**
+       * Connecte un utilisateur en passant par le vrai formulaire de connexion,
+       * avec une réponse du back simulée (fixture admin.json ou user.json).
+       * Attention : la connexion n'est gardée qu'en mémoire. Après cy.login(), il faut
+       * naviguer en cliquant dans l'application : un cy.visit() rechargerait la page et déconnecterait l'utilisateur.
+       * @example cy.login('admin')
+       */
+      login(role?: 'admin' | 'user'): Chainable<void>;
+    }
+  }
+}
+
+Cypress.Commands.add('login', (role: 'admin' | 'user' = 'user') => {
+  // Réponses simulées du back : la connexion, puis la liste des sessions affichée juste après
+  cy.intercept('POST', '/api/auth/login', { fixture: `${role}.json` }).as('login');
+  cy.intercept('GET', '/api/session', { fixture: 'sessions.json' }).as('sessions');
+
+  cy.visit('/login');
+  cy.get('input[formControlName=email]').type('yoga@studio.com');
+  cy.get('input[formControlName=password]').type('test!1234');
+  cy.get('button[type=submit]').click();
+
+  cy.wait('@login');
+  cy.url().should('include', '/sessions');
+});
+
+// Fait de ce fichier un module, nécessaire pour "declare global"
+export {};

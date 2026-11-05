@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "lastName": "DELAHAYE",
+    "firstName": "Margot",
+    "createdAt": "2026-01-01T10:00:00.000Z",
+    "updatedAt": "2026-01-01T10:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "lastName": "THIERCELIN",
+    "firstName": "Hélène",
+    "createdAt": "2026-01-01T10:00:00.000Z",
+    "updatedAt": "2026-01-01T10:00:00.000Z"
+  }
+]
