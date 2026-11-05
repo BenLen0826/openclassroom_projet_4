@@ -11,7 +11,9 @@
                 <mat-form-field fxFlex>
                     <input matInput [type]="hide ? 'password' : 'text'" placeholder="Password"
                         formControlName="password">
-                    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                    <!-- Valeur initiale : bouton sans type, donc "submit" par défaut. Comme c'est le premier bouton
+                         du formulaire, la touche Entrée le "cliquait" : le mot de passe s'affichait au lieu de se connecter. -->
+                    <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
                         [attr.aria-pressed]="hide">
                         <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                     </button>
