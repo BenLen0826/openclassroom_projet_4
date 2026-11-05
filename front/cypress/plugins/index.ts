@@ -7,6 +7,6 @@
  // eslint-disable-next-line @typescript-eslint/no-require-imports
  const registerCodeCoverageTasks = require('@cypress/code-coverage/task');
 
- export default (on, config) => {
+ export default (on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) => {
    return registerCodeCoverageTasks(on, config);
  };
