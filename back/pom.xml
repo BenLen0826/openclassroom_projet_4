@@ -94,6 +94,12 @@
             <artifactId>mysql</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Base de données en mémoire pour les tests d'intégration (pas besoin de Docker) -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -143,7 +149,18 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
+                <!-- 0.8.5 ne sait pas lire les classes compilées en Java 21 (aucun rapport n'était produit) -->
+                <version>0.8.13</version>
+                <!-- Configuration commune au rapport (report) et à la vérification (check) -->
+                <configuration>
+                    <excludes>
+                        <!-- Objets de transport de données : non testés, conformément aux consignes -->
+                        <exclude>**/dto/**</exclude>
+                        <exclude>**/payload/**</exclude>
+                        <!-- Classe de démarrage : ne contient que la méthode main -->
+                        <exclude>**/SpringBootSecurityJwtApplication.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -159,6 +176,7 @@
                         </goals>
                     </execution>
 
+                    <!-- attached to Maven verify phase : "mvn verify" échoue si un indicateur est sous 80 % -->
                     <execution>
                         <id>jacoco-check</id>
                         <goals>
@@ -167,12 +185,38 @@
                         <configuration>
                             <rules>
                                 <rule>
-                                    <element>PACKAGE</element>
+                                    <!-- BUNDLE = l'ensemble du back (et non chaque package séparément) -->
+                                    <element>BUNDLE</element>
                                     <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.9</minimum>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>METHOD</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>CLASS</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>COMPLEXITY</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

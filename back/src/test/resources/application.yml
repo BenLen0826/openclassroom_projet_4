@@ -1,0 +1,24 @@
+# Configuration utilisée uniquement pendant les tests.
+# Ce fichier remplace src/main/resources/application.yml quand les tests s'exécutent.
+oc:
+  app:
+    jwtExpirationMs: 86400000
+    # Clé de test uniquement (aucune valeur réelle). Elle est encodée en Base64 et fait 64 octets,
+    # la taille minimale imposée par l'algorithme de signature HS512.
+    jwtSecret: rYyrxkj1Z+23pUvjo+sIm8rIPo79QEWjWSps/C3L8Frm8p1zW1C6ciJYLkhMtYr/ysHUabv62DqdiuYJyA5GOA==
+spring:
+  datasource:
+    # Base H2 en mémoire, en mode compatible MySQL : elle est recréée vide à chaque lancement des tests.
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      # Tables créées au démarrage des tests et supprimées à la fin.
+      ddl-auto: create-drop
+    show-sql: false
+  docker:
+    compose:
+      # Ne pas démarrer le conteneur MySQL pendant les tests (c'est déjà le comportement par défaut, on le rend explicite).
+      enabled: false
