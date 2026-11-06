@@ -36,10 +36,8 @@ class UserMapperTest {
     @Test
     @DisplayName("toDto copie tous les champs de l'utilisateur")
     void toDto_shouldMapAllFields() {
-        // When
         UserDto dto = userMapper.toDto(buildUser());
 
-        // Then
         assertEquals(1L, dto.getId());
         assertEquals("yoga@studio.com", dto.getEmail());
         assertEquals("Admin", dto.getFirstName());
@@ -55,10 +53,8 @@ class UserMapperTest {
     @Test
     @DisplayName("toEntity copie tous les champs du DTO")
     void toEntity_shouldMapAllFields() {
-        // When
         User user = userMapper.toEntity(buildDto());
 
-        // Then
         assertEquals(1L, user.getId());
         assertEquals("yoga@studio.com", user.getEmail());
         assertEquals("Admin", user.getFirstName());
@@ -72,11 +68,9 @@ class UserMapperTest {
     @Test
     @DisplayName("toDto et toEntity convertissent chaque élément d'une liste")
     void listMapping_shouldMapEachElement() {
-        // When
         List<UserDto> dtos = userMapper.toDto(List.of(buildUser(), buildUser()));
         List<User> users = userMapper.toEntity(List.of(buildDto()));
 
-        // Then
         assertEquals(2, dtos.size());
         assertEquals("yoga@studio.com", dtos.get(0).getEmail());
         assertEquals(1, users.size());

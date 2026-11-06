@@ -14,6 +14,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+/**
+ * Création et validation des tokens JWT, signés en HS512 avec la clé oc.app.jwtSecret.
+ * Le subject du token contient l'email de l'utilisateur.
+ */
 @Slf4j
 @Component
 public class JwtUtils {
@@ -39,6 +43,7 @@ public class JwtUtils {
         return Jwts.parser().setSigningKey(jwtSecret).build().parseClaimsJws(token).getBody().getSubject();
     }
 
+    /** Renvoie false (et journalise la cause) pour un token invalide, expiré, non signé ou vide, au lieu de lever une exception. */
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).build().parseClaimsJws(authToken);

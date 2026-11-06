@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
  * Tests unitaires d'AuthService (connexion et inscription).
  * Toutes les briques de Spring Security sont mockées : on ne vérifie pas un vrai mot de passe ici,
  * on vérifie ce que fait le service selon la réponse de l'AuthenticationManager.
- * (La vraie vérification du mot de passe sera testée dans les tests d'intégration.)
+ * La vraie vérification du mot de passe est testée dans AuthControllerIntegrationTest.
  */
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -114,11 +114,9 @@ class AuthServiceTest {
     @Test
     @DisplayName("login renvoie un JwtResponse complet avec admin = true pour un administrateur")
     void login_shouldReturnJwtResponseWithAdminTrue_whenUserIsAdmin() {
-        // Given
         givenAuthenticationSucceeds();
         when(userRepository.findByEmail("john.doe@test.com")).thenReturn(Optional.of(userWithAdmin(true)));
 
-        // When
         JwtResponse response = authService.login(loginRequest);
 
         // Then : la réponse contient le token et les informations de l'utilisateur
@@ -144,14 +142,11 @@ class AuthServiceTest {
     @Test
     @DisplayName("login renvoie admin = false pour un utilisateur non administrateur")
     void login_shouldReturnAdminFalse_whenUserIsNotAdmin() {
-        // Given
         givenAuthenticationSucceeds();
         when(userRepository.findByEmail("john.doe@test.com")).thenReturn(Optional.of(userWithAdmin(false)));
 
-        // When
         JwtResponse response = authService.login(loginRequest);
 
-        // Then
         assertFalse(response.getAdmin());
     }
 
@@ -162,17 +157,15 @@ class AuthServiceTest {
         givenAuthenticationSucceeds();
         when(userRepository.findByEmail("john.doe@test.com")).thenReturn(Optional.empty());
 
-        // When
         JwtResponse response = authService.login(loginRequest);
 
-        // Then
         assertFalse(response.getAdmin());
     }
 
     @Test
     @DisplayName("login laisse remonter BadCredentialsException et ne génère pas de token si les identifiants sont faux")
     void login_shouldThrowBadCredentialsException_whenCredentialsAreInvalid() {
-        // Given : thenThrow fait lever une exception par le mock au lieu de renvoyer une valeur
+        // Given : l'AuthenticationManager refuse les identifiants
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Bad credentials"));
 
@@ -186,7 +179,6 @@ class AuthServiceTest {
     @Test
     @DisplayName("register enregistre un nouvel utilisateur non admin avec le mot de passe encodé")
     void register_shouldSaveUserWithEncodedPassword_whenEmailIsAvailable() {
-        // Given
         SignupRequest signupRequest = new SignupRequest();
         signupRequest.setEmail("jane.doe@test.com");
         signupRequest.setFirstName("Jane");
@@ -195,7 +187,6 @@ class AuthServiceTest {
         when(userRepository.existsByEmail("jane.doe@test.com")).thenReturn(false);
         when(passwordEncoder.encode("password123")).thenReturn("encoded-password");
 
-        // When
         authService.register(signupRequest);
 
         // Then : on capture l'utilisateur passé à save() pour vérifier chacun de ses champs
@@ -214,7 +205,6 @@ class AuthServiceTest {
     @Test
     @DisplayName("register lève BadRequestException et n'enregistre rien quand l'email est déjà utilisé")
     void register_shouldThrowBadRequestException_whenEmailIsAlreadyTaken() {
-        // Given
         SignupRequest signupRequest = new SignupRequest();
         signupRequest.setEmail("john.doe@test.com");
         signupRequest.setFirstName("John");

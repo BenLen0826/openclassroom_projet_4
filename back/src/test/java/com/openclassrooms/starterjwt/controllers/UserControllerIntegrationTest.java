@@ -53,7 +53,6 @@ class UserControllerIntegrationTest extends IntegrationTestBase {
     @Test
     @DisplayName("DELETE /api/user/{id} sur son propre compte renvoie 200 et supprime l'utilisateur")
     void delete_shouldReturn200AndDeleteUser_whenDeletingOwnAccount() throws Exception {
-        // When
         mockMvc.perform(delete("/api/user/{id}", user.getId()).header("Authorization", bearer(user)))
                 // Then (1) : la réponse HTTP
                 .andExpect(status().isOk());
@@ -68,9 +67,7 @@ class UserControllerIntegrationTest extends IntegrationTestBase {
         // Given : un deuxième utilisateur, connecté, tente de supprimer le compte du premier
         User otherUser = createUser("jane.doe@test.com", false);
 
-        // When
         mockMvc.perform(delete("/api/user/{id}", user.getId()).header("Authorization", bearer(otherUser)))
-                // Then
                 .andExpect(status().isUnauthorized());
 
         assertTrue(userRepository.existsById(user.getId()));

@@ -89,15 +89,12 @@ class SessionMapperTest {
     @Test
     @DisplayName("toEntity copie les champs et récupère le professeur et les participants à partir de leurs ids")
     void toEntity_shouldMapFieldsAndLoadTeacherAndUsers() {
-        // Given
         when(teacherService.findById(5L)).thenReturn(teacher);
         when(userService.findById(10L)).thenReturn(user1);
         when(userService.findById(20L)).thenReturn(user2);
 
-        // When
         Session session = sessionMapper.toEntity(buildDto(5L, List.of(10L, 20L)));
 
-        // Then
         assertEquals(1L, session.getId());
         assertEquals("Yoga du matin", session.getName());
         assertEquals(date, session.getDate());
@@ -109,10 +106,8 @@ class SessionMapperTest {
     @Test
     @DisplayName("toEntity laisse le professeur à null et n'appelle pas TeacherService quand teacher_id est null")
     void toEntity_shouldSetTeacherToNull_whenTeacherIdIsNull() {
-        // When
         Session session = sessionMapper.toEntity(buildDto(null, List.of()));
 
-        // Then
         assertNull(session.getTeacher());
         verify(teacherService, never()).findById(any());
     }
@@ -120,13 +115,11 @@ class SessionMapperTest {
     @Test
     @DisplayName("toEntity renvoie une liste de participants vide quand la liste d'ids est null")
     void toEntity_shouldReturnEmptyUsers_whenUserIdsAreNull() {
-        // Given
         when(teacherService.findById(5L)).thenReturn(teacher);
 
-        // When
         Session session = sessionMapper.toEntity(buildDto(5L, null));
 
-        // Then : Optional.ofNullable(...).orElseGet(Collections::emptyList) remplace null par une liste vide
+        // Then : une liste null devient une liste vide
         assertTrue(session.getUsers().isEmpty());
     }
 
@@ -135,10 +128,8 @@ class SessionMapperTest {
     @Test
     @DisplayName("toDto copie les champs, l'id du professeur et les ids des participants")
     void toDto_shouldMapFieldsTeacherIdAndUserIds() {
-        // When
         SessionDto dto = sessionMapper.toDto(buildSession(teacher, new ArrayList<>(List.of(user1, user2))));
 
-        // Then
         assertEquals(1L, dto.getId());
         assertEquals("Yoga du matin", dto.getName());
         assertEquals(date, dto.getDate());
@@ -150,10 +141,8 @@ class SessionMapperTest {
     @Test
     @DisplayName("toDto renvoie teacher_id null et une liste vide pour une session sans professeur ni participants")
     void toDto_shouldReturnNullTeacherIdAndEmptyUsers_whenSessionHasNoTeacherNorUsers() {
-        // When
         SessionDto dto = sessionMapper.toDto(buildSession(null, null));
 
-        // Then
         assertNull(dto.getTeacher_id());
         assertTrue(dto.getUsers().isEmpty());
     }
@@ -163,10 +152,8 @@ class SessionMapperTest {
     @Test
     @DisplayName("toDto convertit chaque session d'une liste")
     void toDtoList_shouldMapEachSession() {
-        // When
         List<SessionDto> dtos = sessionMapper.toDto(List.of(buildSession(teacher, null), buildSession(null, null)));
 
-        // Then
         assertEquals(2, dtos.size());
         assertEquals(5L, dtos.get(0).getTeacher_id());
         assertNull(dtos.get(1).getTeacher_id());
@@ -175,10 +162,8 @@ class SessionMapperTest {
     @Test
     @DisplayName("toEntity convertit chaque DTO d'une liste")
     void toEntityList_shouldMapEachDto() {
-        // When
         List<Session> sessions = sessionMapper.toEntity(List.of(buildDto(null, null), buildDto(null, null)));
 
-        // Then
         assertEquals(2, sessions.size());
         assertEquals("Yoga du matin", sessions.get(0).getName());
     }

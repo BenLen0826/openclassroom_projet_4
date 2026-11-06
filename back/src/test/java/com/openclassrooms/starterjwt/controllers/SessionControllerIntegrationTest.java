@@ -68,7 +68,6 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
         createSession("Yoga du matin", teacher);
         createSession("Yoga du soir", createTeacher("Hélène", "THIERCELIN"));
 
-        // When + Then
         mockMvc.perform(get("/api/session").header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -92,7 +91,6 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
         session.getUsers().add(user);
         sessionRepository.save(session);
 
-        // When + Then
         mockMvc.perform(get("/api/session/{id}", session.getId()).header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(session.getId()))
@@ -117,7 +115,6 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
     @Test
     @DisplayName("POST /api/session avec des données valides renvoie 200 et crée la session")
     void create_shouldReturn200AndCreateSession_whenDataIsValid() throws Exception {
-        // When
         mockMvc.perform(post("/api/session")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -140,7 +137,6 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
         // Given : @NotBlank sur SessionDto.name
         SessionDto body = sessionBody(null, teacher.getId());
 
-        // When + Then
         mockMvc.perform(post("/api/session")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -156,7 +152,6 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
         // Given : @NotNull sur SessionDto.teacher_id (le professeur est obligatoire dans le formulaire)
         SessionDto body = sessionBody("Yoga du matin", null);
 
-        // When + Then
         mockMvc.perform(post("/api/session")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -183,7 +178,6 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
     @Test
     @DisplayName("PUT /api/session/{id} avec des données valides renvoie 200 et modifie la session")
     void update_shouldReturn200AndUpdateSession_whenDataIsValid() throws Exception {
-        // Given
         Session session = createSession("Yoga du matin", teacher);
 
         // When : on renomme la session
@@ -191,7 +185,6 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(sessionBody("Yoga du soir", teacher.getId()))))
-                // Then (1)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(session.getId()))
                 .andExpect(jsonPath("$.name").value("Yoga du soir"));
@@ -209,7 +202,6 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
         SessionDto body = sessionBody("Yoga du soir", teacher.getId());
         body.setDescription(null);
 
-        // When + Then
         mockMvc.perform(put("/api/session/{id}", session.getId())
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -236,12 +228,9 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
     @Test
     @DisplayName("DELETE /api/session/{id} renvoie 200 et supprime la session")
     void delete_shouldReturn200AndDeleteSession_whenSessionExists() throws Exception {
-        // Given
         Session session = createSession("Yoga du matin", teacher);
 
-        // When
         mockMvc.perform(delete("/api/session/{id}", session.getId()).header("Authorization", token))
-                // Then
                 .andExpect(status().isOk());
 
         assertFalse(sessionRepository.existsById(session.getId()));
@@ -259,13 +248,10 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
     @Test
     @DisplayName("POST /api/session/{id}/participate/{userId} renvoie 200 et inscrit l'utilisateur")
     void participate_shouldReturn200AndAddUser() throws Exception {
-        // Given
         Session session = createSession("Yoga du matin", teacher);
 
-        // When
         mockMvc.perform(post("/api/session/{id}/participate/{userId}", session.getId(), user.getId())
                         .header("Authorization", token))
-                // Then
                 .andExpect(status().isOk());
 
         assertTrue(sessionRepository.findById(session.getId()).orElseThrow().getUsers().contains(user));
@@ -279,7 +265,6 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
         session.getUsers().add(user);
         sessionRepository.save(session);
 
-        // When + Then
         mockMvc.perform(post("/api/session/{id}/participate/{userId}", session.getId(), user.getId())
                         .header("Authorization", token))
                 .andExpect(status().isBadRequest());
@@ -291,10 +276,8 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
     @Test
     @DisplayName("POST /api/session/{id}/participate/{userId} renvoie 404 quand l'utilisateur n'existe pas")
     void participate_shouldReturn404_whenUserDoesNotExist() throws Exception {
-        // Given
         Session session = createSession("Yoga du matin", teacher);
 
-        // When + Then
         mockMvc.perform(post("/api/session/{id}/participate/{userId}", session.getId(), UNKNOWN_ID)
                         .header("Authorization", token))
                 .andExpect(status().isNotFound());
@@ -308,10 +291,8 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
         session.getUsers().add(user);
         sessionRepository.save(session);
 
-        // When
         mockMvc.perform(delete("/api/session/{id}/participate/{userId}", session.getId(), user.getId())
                         .header("Authorization", token))
-                // Then
                 .andExpect(status().isOk());
 
         assertTrue(sessionRepository.findById(session.getId()).orElseThrow().getUsers().isEmpty());
@@ -323,7 +304,6 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
         // Given : session sans participant
         Session session = createSession("Yoga du matin", teacher);
 
-        // When + Then
         mockMvc.perform(delete("/api/session/{id}/participate/{userId}", session.getId(), user.getId())
                         .header("Authorization", token))
                 .andExpect(status().isBadRequest());

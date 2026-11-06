@@ -60,6 +60,7 @@ public class Session {
     @Column(nullable = false)
     private String description;
 
+    // @OneToOne : un professeur ne peut être rattaché qu'à une seule session.
     @OneToOne
     @JoinColumn(name = "teacher_id", referencedColumnName = "id")
     private Teacher teacher;

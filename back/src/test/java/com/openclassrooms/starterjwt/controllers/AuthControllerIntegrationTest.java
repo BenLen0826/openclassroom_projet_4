@@ -47,11 +47,9 @@ class AuthControllerIntegrationTest extends IntegrationTestBase {
         // Given : un administrateur existe en base (mot de passe PASSWORD encodé)
         User admin = createUser("yoga@studio.com", true);
 
-        // When
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("email", "yoga@studio.com", "password", PASSWORD))))
-                // Then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").isNotEmpty())
                 .andExpect(jsonPath("$.type").value("Bearer"))
@@ -66,7 +64,6 @@ class AuthControllerIntegrationTest extends IntegrationTestBase {
     @Test
     @DisplayName("POST /api/auth/login avec un mauvais mot de passe renvoie 401")
     void login_shouldReturn401_whenPasswordIsWrong() throws Exception {
-        // Given
         createUser("yoga@studio.com", true);
 
         // When + Then : BadCredentialsException est transformée en 401 par Spring Security
@@ -101,7 +98,6 @@ class AuthControllerIntegrationTest extends IntegrationTestBase {
     @Test
     @DisplayName("POST /api/auth/register avec des données valides renvoie 200 et crée le compte avec un mot de passe encodé")
     void register_shouldReturn200AndCreateUser_whenDataIsValid() throws Exception {
-        // When
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(validSignup())))
@@ -123,7 +119,6 @@ class AuthControllerIntegrationTest extends IntegrationTestBase {
         // Given : un compte existe déjà avec cet email
         createUser("jane.doe@test.com", false);
 
-        // When + Then
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(validSignup())))
@@ -140,7 +135,6 @@ class AuthControllerIntegrationTest extends IntegrationTestBase {
                 "lastName", "Doe",
                 "password", "password123");
 
-        // When + Then
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(body)))

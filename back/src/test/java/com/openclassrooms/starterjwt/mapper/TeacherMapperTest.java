@@ -38,10 +38,8 @@ class TeacherMapperTest {
     @Test
     @DisplayName("toDto copie tous les champs du professeur")
     void toDto_shouldMapAllFields() {
-        // When
         TeacherDto dto = teacherMapper.toDto(buildTeacher());
 
-        // Then
         assertEquals(5L, dto.getId());
         assertEquals("Margot", dto.getFirstName());
         assertEquals("DELAHAYE", dto.getLastName());
@@ -52,10 +50,8 @@ class TeacherMapperTest {
     @Test
     @DisplayName("toEntity copie tous les champs du DTO")
     void toEntity_shouldMapAllFields() {
-        // When
         Teacher teacher = teacherMapper.toEntity(buildDto());
 
-        // Then
         assertEquals(5L, teacher.getId());
         assertEquals("Margot", teacher.getFirstName());
         assertEquals("DELAHAYE", teacher.getLastName());
@@ -66,11 +62,9 @@ class TeacherMapperTest {
     @Test
     @DisplayName("toDto et toEntity convertissent chaque élément d'une liste")
     void listMapping_shouldMapEachElement() {
-        // When
         List<TeacherDto> dtos = teacherMapper.toDto(List.of(buildTeacher(), buildTeacher()));
         List<Teacher> teachers = teacherMapper.toEntity(List.of(buildDto()));
 
-        // Then
         assertEquals(2, dtos.size());
         assertEquals("Margot", dtos.get(0).getFirstName());
         assertEquals(1, teachers.size());

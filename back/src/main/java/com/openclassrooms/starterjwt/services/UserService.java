@@ -16,6 +16,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    /** Supprime le compte. Un utilisateur ne peut supprimer que le sien : sinon UnauthorizedException (401). */
     public void delete(Long id, String connectedUserEmail) {
         User user = this.findById(id);
 

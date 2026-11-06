@@ -49,6 +49,11 @@ public class WebSecurityConfig {
         return authProvider;
     }
 
+    /**
+     * API sans état (STATELESS) : aucune session HTTP, chaque requête est authentifiée par son token JWT.
+     * AuthTokenFilter s'exécute avant le filtre d'authentification standard ; sans token valide,
+     * une route protégée répond 401.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -57,7 +62,7 @@ public class WebSecurityConfig {
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
-                        // No auth needed on :
+                        // Seules la connexion et l'inscription sont accessibles sans token
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()

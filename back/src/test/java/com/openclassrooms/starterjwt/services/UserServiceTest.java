@@ -38,7 +38,6 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Les setters de Lombok sont "chaînés" (@Accessors(chain = true)) : chaque setX renvoie l'objet.
         user = new User()
                 .setId(1L)
                 .setEmail("john.doe@test.com")
@@ -51,23 +50,18 @@ class UserServiceTest {
     @Test
     @DisplayName("findById renvoie l'utilisateur quand il existe")
     void findById_shouldReturnUser_whenUserExists() {
-        // Given
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        // When
         User result = userService.findById(1L);
 
-        // Then
         assertSame(user, result);
     }
 
     @Test
     @DisplayName("findById lève NotFoundException quand l'utilisateur n'existe pas")
     void findById_shouldThrowNotFoundException_whenUserDoesNotExist() {
-        // Given
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // When + Then
         assertThrows(NotFoundException.class, () -> userService.findById(99L));
     }
 
@@ -77,11 +71,9 @@ class UserServiceTest {
         // Given : l'utilisateur existe et l'email connecté est le sien
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        // When
         userService.delete(1L, "john.doe@test.com");
 
-        // Then : la méthode ne renvoie rien (void), on vérifie donc l'effet attendu :
-        // le repository a bien reçu l'ordre de supprimer CET utilisateur.
+        // Then : le repository a reçu l'ordre de supprimer cet utilisateur
         verify(userRepository).delete(user);
     }
 
@@ -91,20 +83,16 @@ class UserServiceTest {
         // Given : l'utilisateur existe mais l'email connecté est celui de quelqu'un d'autre
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        // When + Then
         assertThrows(UnauthorizedException.class, () -> userService.delete(1L, "other.user@test.com"));
 
-        // never() : vérifie que delete n'a JAMAIS été appelé, quel que soit l'argument (any()).
         verify(userRepository, never()).delete(any());
     }
 
     @Test
     @DisplayName("delete lève NotFoundException et ne supprime rien quand l'utilisateur n'existe pas")
     void delete_shouldThrowNotFoundException_whenUserDoesNotExist() {
-        // Given
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // When + Then
         assertThrows(NotFoundException.class, () -> userService.delete(99L, "john.doe@test.com"));
         verify(userRepository, never()).delete(any());
     }

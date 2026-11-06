@@ -34,7 +34,6 @@ class UserDetailsServiceImplTest {
     @Test
     @DisplayName("loadUserByUsername renvoie les informations de l'utilisateur quand l'email existe")
     void loadUserByUsername_shouldReturnUserDetails_whenEmailExists() {
-        // Given
         User user = new User()
                 .setId(1L)
                 .setEmail("john.doe@test.com")
@@ -44,11 +43,9 @@ class UserDetailsServiceImplTest {
                 .setAdmin(false);
         when(userRepository.findByEmail("john.doe@test.com")).thenReturn(Optional.of(user));
 
-        // When
         var result = userDetailsService.loadUserByUsername("john.doe@test.com");
 
         // Then : l'objet renvoyé est un UserDetailsImpl rempli avec les données de l'utilisateur.
-        // assertInstanceOf vérifie le type ET renvoie l'objet déjà converti (cast) pour lire ses champs.
         UserDetailsImpl userDetails = assertInstanceOf(UserDetailsImpl.class, result);
         assertEquals(1L, userDetails.getId());
         assertEquals("john.doe@test.com", userDetails.getUsername());
@@ -60,7 +57,6 @@ class UserDetailsServiceImplTest {
     @Test
     @DisplayName("loadUserByUsername lève UsernameNotFoundException quand l'email est inconnu")
     void loadUserByUsername_shouldThrowUsernameNotFoundException_whenEmailDoesNotExist() {
-        // Given
         when(userRepository.findByEmail("unknown@test.com")).thenReturn(Optional.empty());
 
         // When + Then : c'est l'exception attendue par Spring Security pour un utilisateur inconnu

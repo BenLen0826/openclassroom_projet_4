@@ -25,22 +25,17 @@ import static org.mockito.Mockito.when;
  * Le repository est remplacé par un mock : on teste uniquement la logique du service,
  * sans démarrer Spring ni utiliser de base de données.
  */
-// Active Mockito dans JUnit 5 : crée les champs @Mock et les injecte dans le champ @InjectMocks.
 @ExtendWith(MockitoExtension.class)
 class TeacherServiceTest {
 
-    // Faux repository : par défaut, toutes ses méthodes renvoient une valeur "vide" (null, Optional.empty(), liste vide...).
-    // Avec when(...).thenReturn(...), on choisit ce qu'il renvoie dans chaque test.
     @Mock
     private TeacherRepository teacherRepository;
 
-    // Vrai service, construit par Mockito avec le faux repository passé dans son constructeur.
     @InjectMocks
     private TeacherService teacherService;
 
     private Teacher teacher;
 
-    // Exécuté avant chaque test : chaque test repart d'un professeur neuf (les tests restent indépendants).
     @BeforeEach
     void setUp() {
         teacher = new Teacher()
@@ -57,7 +52,6 @@ class TeacherServiceTest {
         List<Teacher> teachers = List.of(teacher, otherTeacher);
         when(teacherRepository.findAll()).thenReturn(teachers);
 
-        // When : on appelle la méthode testée
         List<Teacher> result = teacherService.findAll();
 
         // Then : le service renvoie exactement la liste du repository, et l'a bien interrogé
@@ -71,10 +65,9 @@ class TeacherServiceTest {
         // Given : le repository trouve le professeur d'id 1
         when(teacherRepository.findById(1L)).thenReturn(Optional.of(teacher));
 
-        // When
         Teacher result = teacherService.findById(1L);
 
-        // Then : assertSame vérifie que c'est le même objet (pas seulement un objet égal)
+        // Then : c'est l'objet renvoyé par le repository, sans copie
         assertSame(teacher, result);
     }
 
@@ -84,8 +77,7 @@ class TeacherServiceTest {
         // Given : le repository ne trouve rien pour l'id 99
         when(teacherRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // When + Then : assertThrows exécute le code (lambda) et vérifie qu'il lève bien cette exception.
-        // C'est cette exception qui sera traduite en 404 par le GlobalExceptionHandler.
+        // When + Then : NotFoundException, traduite en 404 par GlobalExceptionHandler
         assertThrows(NotFoundException.class, () -> teacherService.findById(99L));
     }
 }

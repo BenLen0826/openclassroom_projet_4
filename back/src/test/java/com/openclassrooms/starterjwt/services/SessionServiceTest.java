@@ -44,7 +44,6 @@ class SessionServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    // Le service a deux dépendances : Mockito passe les deux mocks à son constructeur.
     @InjectMocks
     private SessionService sessionService;
 
@@ -79,10 +78,8 @@ class SessionServiceTest {
         // Given : save renvoie la session (en vrai, avec l'id généré par la base)
         when(sessionRepository.save(session)).thenReturn(session);
 
-        // When
         Session result = sessionService.create(session);
 
-        // Then
         assertSame(session, result);
         verify(sessionRepository).save(session);
     }
@@ -90,37 +87,29 @@ class SessionServiceTest {
     @Test
     @DisplayName("findAll renvoie la liste des sessions fournie par le repository")
     void findAll_shouldReturnAllSessions() {
-        // Given
         List<Session> sessions = List.of(session);
         when(sessionRepository.findAll()).thenReturn(sessions);
 
-        // When
         List<Session> result = sessionService.findAll();
 
-        // Then
         assertEquals(sessions, result);
     }
 
     @Test
     @DisplayName("getById renvoie la session quand elle existe")
     void getById_shouldReturnSession_whenSessionExists() {
-        // Given
         when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
 
-        // When
         Session result = sessionService.getById(1L);
 
-        // Then
         assertSame(session, result);
     }
 
     @Test
     @DisplayName("getById lève NotFoundException quand la session n'existe pas")
     void getById_shouldThrowNotFoundException_whenSessionDoesNotExist() {
-        // Given
         when(sessionRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // When + Then
         assertThrows(NotFoundException.class, () -> sessionService.getById(99L));
     }
 
@@ -129,10 +118,8 @@ class SessionServiceTest {
     @Test
     @DisplayName("delete supprime la session quand elle existe")
     void delete_shouldDeleteSession_whenSessionExists() {
-        // Given
         when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
 
-        // When
         sessionService.delete(1L);
 
         // Then : c'est bien la session trouvée qui est supprimée
@@ -142,10 +129,8 @@ class SessionServiceTest {
     @Test
     @DisplayName("delete lève NotFoundException et ne supprime rien quand la session n'existe pas")
     void delete_shouldThrowNotFoundException_whenSessionDoesNotExist() {
-        // Given
         when(sessionRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // When + Then
         assertThrows(NotFoundException.class, () -> sessionService.delete(99L));
         verify(sessionRepository, never()).delete(any());
     }
@@ -164,10 +149,9 @@ class SessionServiceTest {
                 .setUsers(new ArrayList<>());
         when(sessionRepository.save(any(Session.class))).thenReturn(newData);
 
-        // When
         Session result = sessionService.update(1L, newData);
 
-        // Then : ArgumentCaptor "attrape" l'objet réellement passé à save() pour qu'on puisse l'inspecter.
+        // Then : on récupère la session passée à save()
         ArgumentCaptor<Session> captor = ArgumentCaptor.forClass(Session.class);
         verify(sessionRepository).save(captor.capture());
         Session savedSession = captor.getValue();
@@ -180,10 +164,8 @@ class SessionServiceTest {
     @Test
     @DisplayName("update lève NotFoundException et n'enregistre rien quand la session n'existe pas")
     void update_shouldThrowNotFoundException_whenSessionDoesNotExist() {
-        // Given
         when(sessionRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // When + Then
         assertThrows(NotFoundException.class, () -> sessionService.update(99L, session));
         verify(sessionRepository, never()).save(any());
     }
@@ -197,7 +179,6 @@ class SessionServiceTest {
         when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
         when(userRepository.findById(10L)).thenReturn(Optional.of(user));
 
-        // When
         sessionService.participate(1L, 10L);
 
         // Then : l'utilisateur fait partie des participants et la session a été enregistrée
@@ -208,10 +189,8 @@ class SessionServiceTest {
     @Test
     @DisplayName("participate lève NotFoundException quand la session n'existe pas")
     void participate_shouldThrowNotFoundException_whenSessionDoesNotExist() {
-        // Given
         when(sessionRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // When + Then
         assertThrows(NotFoundException.class, () -> sessionService.participate(99L, 10L));
         verify(sessionRepository, never()).save(any());
     }
@@ -223,7 +202,6 @@ class SessionServiceTest {
         when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // When + Then
         assertThrows(NotFoundException.class, () -> sessionService.participate(1L, 99L));
         verify(sessionRepository, never()).save(any());
     }
@@ -236,7 +214,6 @@ class SessionServiceTest {
         when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
         when(userRepository.findById(10L)).thenReturn(Optional.of(user));
 
-        // When + Then
         assertThrows(BadRequestException.class, () -> sessionService.participate(1L, 10L));
         // L'utilisateur n'a pas été ajouté une deuxième fois et rien n'a été enregistré
         assertEquals(1, session.getUsers().size());
@@ -252,7 +229,6 @@ class SessionServiceTest {
         session.getUsers().add(user);
         when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
 
-        // When
         sessionService.noLongerParticipate(1L, 10L);
 
         // Then : le service remplace la liste par une nouvelle liste filtrée, sans l'utilisateur
@@ -288,7 +264,6 @@ class SessionServiceTest {
         // Given : la liste des participants est vide
         when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
 
-        // When + Then
         assertThrows(BadRequestException.class, () -> sessionService.noLongerParticipate(1L, 10L));
         verify(sessionRepository, never()).save(any());
     }
@@ -296,10 +271,8 @@ class SessionServiceTest {
     @Test
     @DisplayName("noLongerParticipate lève NotFoundException quand la session n'existe pas")
     void noLongerParticipate_shouldThrowNotFoundException_whenSessionDoesNotExist() {
-        // Given
         when(sessionRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // When + Then
         assertThrows(NotFoundException.class, () -> sessionService.noLongerParticipate(99L, 10L));
         verify(sessionRepository, never()).save(any());
     }

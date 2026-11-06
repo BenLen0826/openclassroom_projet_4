@@ -23,17 +23,11 @@ import java.util.Date;
 /**
  * Classe de base de tous les tests d'intégration des controllers.
  *
- * Chaque classe de test d'intégration "hérite" de celle-ci (extends IntegrationTestBase) et récupère ainsi :
- * - les annotations qui démarrent l'application et fournissent MockMvc ;
- * - les objets utiles (MockMvc, repositories, ObjectMapper) ;
- * - des méthodes pour créer des données en base et obtenir un vrai token JWT.
- *
- * Elle est "abstract" : elle ne contient aucun test et ne peut pas être exécutée seule.
- * Son nom ne finit pas par "Test" : elle n'est donc pas comptée parmi les classes de test.
+ * Démarre l'application complète (sécurité, JPA, base H2 de src/test/resources/application.yml) avec MockMvc,
+ * et fournit les helpers de création de données et de token JWT.
+ * Son nom ne finit pas par "Test" : Surefire ne la prend pas pour une classe de test.
  */
-// Démarre l'application Spring complète (sécurité, JPA, base H2 de src/test/resources/application.yml).
 @SpringBootTest
-// Fournit MockMvc : il envoie de vraies requêtes HTTP à l'application, sans démarrer de serveur réseau.
 @AutoConfigureMockMvc
 // Pas de @Transactional sur les tests : chaque requête MockMvc utilise ses propres transactions, comme en production.
 // Avec @Transactional, la transaction du test englobait aussi la requête : Hibernate enregistrait alors
@@ -48,12 +42,10 @@ public abstract class IntegrationTestBase {
     /** Mot de passe en clair des utilisateurs créés par createUser (stocké encodé en base). */
     protected static final String PASSWORD = "password123";
 
-    // "protected" : ces champs sont accessibles dans les classes filles (les vrais tests).
-    // @Autowired : Spring fournit les VRAIS objets de l'application (plus aucun mock ici).
     @Autowired
     protected MockMvc mockMvc;
 
-    // Convertit un objet Java en JSON (corps des requêtes POST / PUT), avec la même configuration que l'application.
+    // Même configuration Jackson que l'application, pour sérialiser les corps des requêtes.
     @Autowired
     protected ObjectMapper objectMapper;
 

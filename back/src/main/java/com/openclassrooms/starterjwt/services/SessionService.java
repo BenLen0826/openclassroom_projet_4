@@ -46,10 +46,12 @@ public class SessionService {
         // désormais NotFoundException renvoie 404.
         this.getById(id);
 
+        // Le corps de la requête n'a pas d'id : sans cette ligne, save() créerait une nouvelle session.
         session.setId(id);
         return this.sessionRepository.save(session);
     }
 
+    /** Inscrit l'utilisateur. NotFoundException (404) si la session ou l'utilisateur n'existe pas, BadRequestException (400) s'il participe déjà. */
     public void participate(Long id, Long userId) {
         Session session = this.getById(id);
         User user = this.userRepository.findById(userId).orElseThrow(NotFoundException::new);
@@ -64,6 +66,7 @@ public class SessionService {
         this.sessionRepository.save(session);
     }
 
+    /** Désinscrit l'utilisateur. NotFoundException (404) si la session n'existe pas, BadRequestException (400) s'il ne participait pas. */
     public void noLongerParticipate(Long id, Long userId) {
         Session session = this.getById(id);
 

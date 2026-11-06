@@ -36,7 +36,6 @@ class TeacherControllerIntegrationTest extends IntegrationTestBase {
     void findAll_shouldReturn401_whenNoToken() throws Exception {
         // When : aucune en-tête Authorization
         mockMvc.perform(get("/api/teacher"))
-                // Then
                 .andExpect(status().isUnauthorized());
     }
 
@@ -77,12 +76,9 @@ class TeacherControllerIntegrationTest extends IntegrationTestBase {
         createTeacher("Margot", "DELAHAYE");
         createTeacher("Hélène", "THIERCELIN");
 
-        // When
         mockMvc.perform(get("/api/teacher").header("Authorization", bearer(user)))
-                // Then : "$" est la racine du JSON (ici un tableau)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                // "$[*].lastName" = le champ lastName de chaque élément du tableau, dans n'importe quel ordre
                 .andExpect(jsonPath("$[*].lastName", containsInAnyOrder("DELAHAYE", "THIERCELIN")));
     }
 
@@ -91,12 +87,9 @@ class TeacherControllerIntegrationTest extends IntegrationTestBase {
     @Test
     @DisplayName("GET /api/teacher/{id} renvoie 200 et le professeur demandé")
     void findById_shouldReturn200AndTeacher_whenTeacherExists() throws Exception {
-        // Given
         Teacher teacher = createTeacher("Margot", "DELAHAYE");
 
-        // When : {id} est remplacé par la valeur passée en deuxième argument
         mockMvc.perform(get("/api/teacher/{id}", teacher.getId()).header("Authorization", bearer(user)))
-                // Then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(teacher.getId()))
                 .andExpect(jsonPath("$.firstName").value("Margot"))

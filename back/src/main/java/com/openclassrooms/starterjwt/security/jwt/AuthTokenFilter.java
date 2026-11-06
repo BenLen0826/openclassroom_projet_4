@@ -18,6 +18,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Lit le token de l'en-tête "Authorization: Bearer <token>" à chaque requête. S'il est valide, recharge
+ * l'utilisateur depuis la base (email = subject du token) et le place dans le SecurityContext.
+ * Sinon la requête continue sans authentification, et Spring Security renvoie 401 sur une route protégée.
+ */
 public class AuthTokenFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
     @Autowired

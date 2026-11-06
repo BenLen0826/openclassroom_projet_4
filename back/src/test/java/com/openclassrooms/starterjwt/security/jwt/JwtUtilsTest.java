@@ -45,8 +45,7 @@ class JwtUtilsTest {
     }
 
     /**
-     * Les champs jwtSecret et jwtExpirationMs sont normalement remplis par Spring (@Value) au démarrage.
-     * Sans Spring, ReflectionTestUtils.setField permet de remplir ces champs privés directement.
+     * Remplit les champs @Value (jwtSecret, jwtExpirationMs) sans démarrer Spring.
      */
     private JwtUtils createJwtUtils(String secret, long expirationMs) {
         JwtUtils utils = new JwtUtils();
@@ -58,7 +57,6 @@ class JwtUtilsTest {
     @Test
     @DisplayName("generateJwtToken crée un token dont on peut relire l'email de l'utilisateur")
     void generateJwtToken_shouldCreateTokenContainingUsername() {
-        // When
         String token = jwtUtils.generateJwtToken(authentication);
 
         // Then : getUserNameFromJwtToken retrouve l'email placé dans le token ("subject")
@@ -68,10 +66,8 @@ class JwtUtilsTest {
     @Test
     @DisplayName("validateJwtToken renvoie true pour un token valide")
     void validateJwtToken_shouldReturnTrue_whenTokenIsValid() {
-        // Given
         String token = jwtUtils.generateJwtToken(authentication);
 
-        // When + Then
         assertTrue(jwtUtils.validateJwtToken(token));
     }
 
