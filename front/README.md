@@ -6,9 +6,9 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 Git clone:
 
-> git clone https://github.com/OpenClassrooms-Student-Center/P5-Full-Stack-testing
+> git clone https://github.com/BenLen0826/openclassroom_projet_4.git
 
-Go inside the front-end folder (from the repository root):
+Go inside the front-end folder (from the repository root, `openclassroom_projet_4`):
 
 > cd front
 
