@@ -1,6 +1,5 @@
 // Écran "Login" : connexion.
 // Le back est simulé avec cy.intercept et les fixtures (cypress/fixtures).
-// Règle des sélecteurs : on localise avec data-testid (cy.getByTestId), on vérifie le contenu avec le texte.
 describe('Login', () => {
   const credentials = { email: 'yoga@studio.com', password: 'test!1234' };
 

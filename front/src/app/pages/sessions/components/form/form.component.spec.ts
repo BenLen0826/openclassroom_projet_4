@@ -11,8 +11,7 @@ import { SessionService } from '../../../../core/service/session.service';
 import { TeacherService } from '../../../../core/service/teacher.service';
 import { FormComponent } from './form.component';
 
-// Test unitaire : services mockés, ActivatedRoute mocké, et router.url simulé
-// pour choisir entre le mode création et le mode modification.
+// Unitaire : services et ActivatedRoute mockés ; router.url est simulé pour choisir entre création et modification.
 describe('FormComponent', () => {
   let component: FormComponent;
   let fixture: ComponentFixture<FormComponent>;
@@ -60,7 +59,7 @@ describe('FormComponent', () => {
 
     fixture = TestBed.createComponent(FormComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // ngOnInit
+    fixture.detectChanges();
   };
 
   beforeEach(() => {

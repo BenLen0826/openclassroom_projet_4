@@ -12,7 +12,7 @@ import { SessionService } from '../../../../core/service/session.service';
 import { TeacherService } from '../../../../core/service/teacher.service';
 import { DetailComponent } from './detail.component';
 
-// Test unitaire : tous les services sont mockés, ainsi que l'ActivatedRoute (paramètre :id de l'URL).
+// Unitaire : services et ActivatedRoute (paramètre :id) mockés.
 describe('DetailComponent', () => {
   let component: DetailComponent;
   let fixture: ComponentFixture<DetailComponent>;
@@ -122,8 +122,7 @@ describe('DetailComponent', () => {
     describe('back()', () => {
       let historyBack: jest.SpyInstance;
 
-      // window.history est un objet GLOBAL, partagé par tous les tests : on remet la vraie méthode back()
-      // après le test, pour qu'il ne reste pas espionné dans les tests suivants
+      // window.history est global : on restaure back() après le test pour ne pas impacter les tests suivants.
       afterEach(() => historyBack.mockRestore());
 
       it('should go to the previous page', () => {

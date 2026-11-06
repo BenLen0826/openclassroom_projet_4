@@ -8,7 +8,7 @@ import { RegisterRequest } from '../../core/models/registerRequest.interface';
 import { AuthService } from '../../core/service/auth.service';
 import { RegisterComponent } from './register.component';
 
-// Test unitaire : AuthService est mocké, on teste la validation et le submit du composant.
+// Unitaire : AuthService mocké.
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;

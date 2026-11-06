@@ -1,5 +1,4 @@
 // Écran "Sessions" : liste des sessions (cypress/fixtures/sessions.json, renvoyée par cy.login).
-// Règle des sélecteurs : on localise avec data-testid (cy.getByTestId), on vérifie le contenu avec le texte.
 describe('Sessions list', () => {
   // La carte d'une session, retrouvée par le nom de la session et non par sa position dans la liste
   const sessionCard = (sessionName: string) =>

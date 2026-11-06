@@ -1,6 +1,5 @@
 // Écran "Register" : création de compte.
 // Le back est simulé avec cy.intercept : aucune donnée n'est réellement enregistrée.
-// Règle des sélecteurs : on localise avec data-testid (cy.getByTestId), on vérifie le contenu avec le texte.
 describe('Register', () => {
   const newUser = {
     firstName: 'Lucas',

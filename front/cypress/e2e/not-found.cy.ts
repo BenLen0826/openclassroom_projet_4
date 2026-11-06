@@ -1,5 +1,4 @@
 // Écran "Page not found" : toute adresse inconnue est redirigée vers /404.
-// Règle des sélecteurs : on localise avec data-testid (cy.getByTestId), on vérifie le contenu avec le texte.
 describe('Not found', () => {
   it('should redirect an unknown address to the 404 page', () => {
     cy.visit('/page-inexistante');

@@ -1,31 +1,23 @@
 import { ComponentFixture } from '@angular/core/testing';
 
-// Aides pour retrouver les éléments par leur attribut data-testid dans les tests Jest
-// (l'équivalent de cy.getByTestId dans les tests Cypress).
-// Les data-testid ne changent ni avec le texte affiché, ni avec la structure HTML ou les composants Material.
-// Ce fichier est hors de src/app : il n'est pas compté dans la couverture de code.
-//
-// Noms choisis d'après la convention de Testing Library :
-//   getBy...   → l'élément DOIT exister : sinon le test échoue avec un message clair
-//   queryBy... → renvoie null si l'élément n'existe pas : pour vérifier une ABSENCE
-//   queryAllBy → renvoie tous les éléments (tableau vide si aucun)
+// Recherche d'éléments par data-testid dans les tests Jest (équivalent de cy.getByTestId côté Cypress).
+// Placé hors de src/app pour ne pas être compté dans la couverture.
+// Nommage de Testing Library : getBy (l'élément doit exister), queryBy (null si absent), queryAllBy (tableau).
 
-// Où chercher : dans le composant testé (fixture), ou dans tout le document
-// (utile pour les éléments que Material affiche hors du composant, comme les options d'un mat-select).
+// Racine de recherche : la fixture du composant, ou document pour les éléments que Material
+// affiche hors du composant (options d'un mat-select, par exemple).
 type SearchRoot = ComponentFixture<unknown> | Document;
 
 const rootElement = (root: SearchRoot): ParentNode =>
   root instanceof ComponentFixture ? root.nativeElement : root;
 
-// Le premier élément qui porte ce data-testid, ou null s'il n'existe pas
 export const queryByTestId = <T extends HTMLElement = HTMLElement>(root: SearchRoot, testId: string): T | null =>
   rootElement(root).querySelector<T>(`[data-testid="${testId}"]`);
 
-// Tous les éléments qui portent ce data-testid (tableau vide si aucun)
 export const queryAllByTestId = <T extends HTMLElement = HTMLElement>(root: SearchRoot, testId: string): T[] =>
   Array.from(rootElement(root).querySelectorAll<T>(`[data-testid="${testId}"]`));
 
-// L'élément qui porte ce data-testid ; s'il n'existe pas, le test échoue avec un message qui dit lequel manque
+// Lève une erreur nommant le data-testid manquant, plus lisible qu'un « cannot read property of null ».
 export const getByTestId = <T extends HTMLElement = HTMLElement>(root: SearchRoot, testId: string): T => {
   const element = queryByTestId<T>(root, testId);
   if (!element) {

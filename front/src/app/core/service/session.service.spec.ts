@@ -7,7 +7,6 @@ import { SessionService } from './session.service';
 describe('SessionService', () => {
   let service: SessionService;
 
-  // Donnée de test : un utilisateur connecté tel que le renvoie le back
   const sessionInformation: SessionInformation = {
     token: 'fake-jwt-token',
     type: 'Bearer',
@@ -33,28 +32,22 @@ describe('SessionService', () => {
   });
 
   it('should store the user and be logged in after logIn', () => {
-    // Act
     service.logIn(sessionInformation);
 
-    // Assert
     expect(service.isLogged).toBe(true);
     expect(service.sessionInformation).toEqual(sessionInformation);
   });
 
   it('should clear the user and be logged out after logOut', () => {
-    // Arrange : on part d'un utilisateur connecté
     service.logIn(sessionInformation);
 
-    // Act
     service.logOut();
 
-    // Assert
     expect(service.isLogged).toBe(false);
     expect(service.sessionInformation).toBeUndefined();
   });
 
   it('should emit the login state through $isLogged', () => {
-    // On s'abonne à l'Observable et on enregistre chaque valeur reçue
     const values: boolean[] = [];
     service.$isLogged().subscribe(isLogged => values.push(isLogged));
 

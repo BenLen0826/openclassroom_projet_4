@@ -10,7 +10,7 @@ import { SessionService } from '../../core/service/session.service';
 import { UserService } from '../../core/service/user.service';
 import { MeComponent } from './me.component';
 
-// Test unitaire : tous les services sont mockés, on teste la logique de MeComponent
+// Unitaire : tous les services sont mockés.
 describe('MeComponent', () => {
   let component: MeComponent;
   let fixture: ComponentFixture<MeComponent>;
@@ -31,8 +31,8 @@ describe('MeComponent', () => {
     logOut: jest.fn(),
   };
   const userServiceMock = {
-    getById: jest.fn().mockReturnValue(of(user)),       // "le back répond avec user"
-    delete: jest.fn().mockReturnValue(of(undefined)),   // "le back répond OK, sans contenu"
+    getById: jest.fn().mockReturnValue(of(user)),
+    delete: jest.fn().mockReturnValue(of(undefined)),
   };
   const matSnackBarMock = { open: jest.fn() };
 
@@ -58,7 +58,7 @@ describe('MeComponent', () => {
 
     fixture = TestBed.createComponent(MeComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // déclenche ngOnInit
+    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -74,12 +74,11 @@ describe('MeComponent', () => {
   describe('back()', () => {
     let historyBack: jest.SpyInstance;
 
-    // window.history est un objet GLOBAL, partagé par tous les tests : on remet la vraie méthode back()
-    // après le test, pour qu'il ne reste pas espionné dans les tests suivants
+    // window.history est global : on restaure back() après le test pour ne pas impacter les tests suivants.
     afterEach(() => historyBack.mockRestore());
 
     it('should go to the previous page', () => {
-      // mockImplementation : on remplace le vrai comportement (sinon jsdom changerait de page)
+      // on empêche jsdom de changer réellement de page
       historyBack = jest.spyOn(window.history, 'back').mockImplementation(() => {});
 
       component.back();

@@ -1,7 +1,6 @@
 // Écran "Informations session" : détail d'une session, participation et suppression.
 // Rappel des fixtures : session 1 = "Yoga du matin", sans participant, professeure 1 (Margot DELAHAYE) ;
 // session 2 = "Yoga du soir", l'utilisateur 2 (user.json) y participe, professeure 2 (Hélène THIERCELIN).
-// Règle des sélecteurs : on localise avec data-testid (cy.getByTestId), on vérifie le contenu avec le texte.
 describe('Session detail', () => {
   // Prépare les réponses du back pour le détail d'une session : la session, puis son professeur.
   // La session est désignée par son id, et son professeur est retrouvé par teacher_id, comme le fait l'application.

@@ -12,8 +12,7 @@ import { SessionService } from '../../core/service/session.service';
 import { getByTestId, queryByTestId } from '../../../testing/test-id';
 import { MeComponent } from './me.component';
 
-// Test d'intégration : vrai composant + vrai template + vrais UserService et SessionService.
-// Seul le back est simulé avec HttpTestingController.
+// Intégration : composant, template, UserService et SessionService réels ; seul le back est simulé (HttpTestingController).
 describe('MeComponent (integration)', () => {
   let fixture: ComponentFixture<MeComponent>;
   let httpMock: HttpTestingController;
@@ -47,9 +46,9 @@ describe('MeComponent (integration)', () => {
   // Crée le composant et répond à la requête GET api/user/1 lancée par ngOnInit
   const createComponentWith = (userFromBack: User): void => {
     fixture = TestBed.createComponent(MeComponent);
-    fixture.detectChanges();                           // ngOnInit → GET api/user/1
-    httpMock.expectOne('api/user/1').flush(userFromBack); // le "back" répond
-    fixture.detectChanges();                           // affiche les données reçues
+    fixture.detectChanges(); // ngOnInit → GET api/user/1
+    httpMock.expectOne('api/user/1').flush(userFromBack);
+    fixture.detectChanges();
   };
 
   beforeEach(async () => {
@@ -65,7 +64,7 @@ describe('MeComponent (integration)', () => {
 
     httpMock = TestBed.inject(HttpTestingController);
     sessionService = TestBed.inject(SessionService);
-    sessionService.logIn(sessionInformation); // un utilisateur est connecté
+    sessionService.logIn(sessionInformation);
     router = TestBed.inject(Router);
     jest.spyOn(router, 'navigate').mockResolvedValue(true);
   });
@@ -84,7 +83,7 @@ describe('MeComponent (integration)', () => {
   });
 
   it('should display "You are admin" and no delete button for an admin', () => {
-    createComponentWith({ ...user, admin: true }); // copie de user avec admin à true
+    createComponentWith({ ...user, admin: true });
 
     expect(queryByTestId(fixture, 'me-admin-message')).not.toBeNull();
     expect(queryByTestId(fixture, 'me-delete-action')).toBeNull();
@@ -99,8 +98,7 @@ describe('MeComponent (integration)', () => {
 
   it('should delete the account and log out when clicking on the delete button', () => {
     createComponentWith(user);
-    // On espionne le MatSnackBar réellement utilisé par le composant (fourni par MaterialModule).
-    // mockReturnValue évite d'afficher vraiment la snackbar (jsdom ne sait pas lire le CSS Material).
+    // mockReturnValue : la snackbar n'est pas réellement ouverte (jsdom ne sait pas lire le CSS de Material).
     const snackBarOpen = jest.spyOn(fixture.debugElement.injector.get(MatSnackBar), 'open')
       .mockReturnValue({} as ReturnType<MatSnackBar['open']>);
 

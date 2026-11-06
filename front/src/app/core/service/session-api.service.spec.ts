@@ -8,7 +8,6 @@ import { SessionApiService } from './session-api.service';
 
 describe('SessionApiService', () => {
   let service: SessionApiService;
-  // Le "faux back" : il intercepte les requêtes envoyées par HttpClient
   let httpMock: HttpTestingController;
 
   const session: Session = {
@@ -40,17 +39,13 @@ describe('SessionApiService', () => {
   it('all() should GET the list of sessions', () => {
     let result: Session[] | undefined;
 
-    // 1. On appelle le service et on garde la réponse
     service.all().subscribe(sessions => result = sessions);
 
-    // 2. On vérifie qu'UNE requête est partie vers cette URL, avec la bonne méthode
     const req = httpMock.expectOne('api/session');
     expect(req.request.method).toBe('GET');
 
-    // 3. On répond à la place du back
     req.flush([session]);
 
-    // 4. Le service a bien transmis la réponse
     expect(result).toEqual([session]);
   });
 
@@ -82,7 +77,6 @@ describe('SessionApiService', () => {
 
     const req = httpMock.expectOne('api/session');
     expect(req.request.method).toBe('POST');
-    // On vérifie aussi CE QUI est envoyé au back
     expect(req.request.body).toEqual(session);
     req.flush(session);
 

@@ -8,8 +8,7 @@ import { SessionApiService } from '../core/service/session-api.service';
 import { SessionService } from '../core/service/session.service';
 import { customJwtInterceptorFn } from './customJwtInterceptorFn';
 
-// Test d'intégration : vrai SessionApiService + vrai HttpClient + vrai intercepteur
-// + vrai SessionService. Seul le back est simulé par HttpTestingController.
+// Intégration : SessionApiService, HttpClient, intercepteur et SessionService réels ; seul le back est simulé.
 describe('customJwtInterceptorFn (integration)', () => {
   let sessionApiService: SessionApiService;
   let sessionService: SessionService;

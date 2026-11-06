@@ -78,12 +78,10 @@ export class DetailComponent implements OnInit {
     this.sessionApiService
       .detail(this.sessionId)
       .pipe(
-        // tap : effet de bord, on mémorise la session sans modifier la valeur qui circule
         tap((session: Session) => {
           this.session = session;
           this.isParticipate = session.users.some(u => u === this.sessionService.sessionInformation!.id);
         }),
-        // switchMap : remplace la session par l'appel du professeur, le subscribe reçoit donc un Teacher
         switchMap((session: Session) => this.teacherService.detail(session.teacher_id.toString())),
         // toujours en dernier, pour couvrir aussi l'appel lancé par switchMap
         takeUntilDestroyed(this.destroyRef)

@@ -9,8 +9,7 @@ import { AuthService } from '../../core/service/auth.service';
 import { SessionService } from '../../core/service/session.service';
 import { LoginComponent } from './login.component';
 
-// Test unitaire : AuthService et SessionService sont mockés,
-// on teste la logique du composant (validation du formulaire et submit).
+// Unitaire : AuthService et SessionService mockés.
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
@@ -60,7 +59,6 @@ describe('LoginComponent', () => {
     });
 
     it('should mark email and password as required', () => {
-      // hasError('required') : la règle Validators.required n'est pas respectée
       expect(component.form.controls.email.hasError('required')).toBe(true);
       expect(component.form.controls.password.hasError('required')).toBe(true);
     });
@@ -84,7 +82,7 @@ describe('LoginComponent', () => {
     });
 
     it('should log in, store the session and go to the sessions page on success', () => {
-      authServiceMock.login.mockReturnValue(of(sessionInformation)); // le "back" accepte
+      authServiceMock.login.mockReturnValue(of(sessionInformation));
 
       component.submit();
 
@@ -95,7 +93,6 @@ describe('LoginComponent', () => {
     });
 
     it('should set onError and stay on the page when the credentials are wrong', () => {
-      // throwError : un Observable qui ne renvoie pas de valeur mais une ERREUR
       authServiceMock.login.mockReturnValue(throwError(() => new Error('Bad credentials')));
 
       component.submit();

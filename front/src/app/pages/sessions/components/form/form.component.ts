@@ -44,6 +44,8 @@ export class FormComponent implements OnInit {
     if (!this.sessionService.sessionInformation!.admin) {
       this.router.navigate(['/sessions']);
     }
+    // Le même composant sert à la création (/sessions/create) et à la modification (/sessions/update/:id) :
+    // en modification, le formulaire n'est construit qu'après réception de la session.
     const url = this.router.url;
     if (url.includes('update')) {
       this.onUpdate = true;
@@ -59,6 +61,7 @@ export class FormComponent implements OnInit {
 
   public submit(): void {
     const { name, date, teacher_id, description } = this.sessionForm!.getRawValue();
+    // Le champ date contient une chaîne "aaaa-mm-jj" : convertie en Date pour le back.
     const session = { name, date: new Date(date), teacher_id: teacher_id!, description } as Session;
 
     if (!this.onUpdate) {
@@ -80,6 +83,7 @@ export class FormComponent implements OnInit {
         session ? session.name : '',
         [Validators.required]
       ),
+      // <input type="date"> attend une chaîne "aaaa-mm-jj" : on garde la partie date de l'ISO.
       date: this.fb.nonNullable.control(
         session ? new Date(session.date).toISOString().split('T')[0] : '',
         [Validators.required]

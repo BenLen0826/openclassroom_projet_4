@@ -13,8 +13,8 @@ import { SessionService } from '../../../../core/service/session.service';
 import { getByTestId, queryAllByTestId } from '../../../../../testing/test-id';
 import { FormComponent } from './form.component';
 
-// Test d'intégration : vrai composant + vrai template + vrais SessionApiService, TeacherService
-// et SessionService. On remplit le formulaire dans le DOM ; seuls le back et l'URL sont simulés.
+// Intégration : composant, template, SessionApiService, TeacherService et SessionService réels ;
+// seuls le back et l'URL sont simulés.
 describe('FormComponent (integration)', () => {
   let fixture: ComponentFixture<FormComponent>;
   let httpMock: HttpTestingController;
@@ -45,7 +45,6 @@ describe('FormComponent (integration)', () => {
     admin: true,
   };
 
-  // --- Aides pour manipuler le DOM ---
   // Champ texte du formulaire, retrouvé par son data-testid "form-<name>-field" (ex : form-name-field)
   type TextField = 'name' | 'date' | 'description';
   const field = (name: TextField): HTMLInputElement | HTMLTextAreaElement =>
@@ -63,7 +62,6 @@ describe('FormComponent (integration)', () => {
   };
 
   // Ouvre la liste déroulante Material puis clique sur l'option du professeur
-  // (avant : clic sur .mat-mdc-select-trigger, une classe INTERNE de Material ; le data-testid suffit)
   const selectTeacher = (teacherName: string): void => {
     getByTestId(fixture, 'form-teacher-field').click();
     fixture.detectChanges();
@@ -83,7 +81,7 @@ describe('FormComponent (integration)', () => {
   const createComponentAt = (url: string): void => {
     jest.spyOn(router, 'url', 'get').mockReturnValue(url);
     fixture = TestBed.createComponent(FormComponent);
-    fixture.detectChanges(); // ngOnInit
+    fixture.detectChanges();
     snackBarOpen = jest.spyOn(fixture.debugElement.injector.get(MatSnackBar), 'open')
       .mockReturnValue({} as ReturnType<MatSnackBar['open']>);
   };

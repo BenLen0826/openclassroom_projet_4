@@ -1,5 +1,4 @@
 // Écran "Création / Modification de session" (réservé aux admins).
-// Règle des sélecteurs : on localise avec data-testid (cy.getByTestId), on vérifie le contenu avec le texte.
 describe('Session form', () => {
   const newSession = {
     name: 'Yoga du week-end',

@@ -1,6 +1,5 @@
 // Écran "Account" : informations du compte de l'utilisateur connecté, et suppression du compte.
 // Fixtures : me-user.json (utilisateur 2, Lucas Martin) et me-admin.json (admin, id 1).
-// Règle des sélecteurs : on localise avec data-testid (cy.getByTestId), on vérifie le contenu avec le texte.
 describe('Account', () => {
   // Depuis n'importe quelle page, clique sur "Account" dans la barre du haut
   const openAccount = (): void => {

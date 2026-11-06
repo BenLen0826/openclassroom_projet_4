@@ -1,5 +1,4 @@
 // Déconnexion, depuis le lien "Logout" de la barre du haut.
-// Règle des sélecteurs : on localise avec data-testid (cy.getByTestId), on vérifie le contenu avec le texte.
 describe('Logout', () => {
   it('should log the user out and go back to the login page', () => {
     cy.login('user');

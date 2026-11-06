@@ -8,8 +8,7 @@ import { expect } from '@jest/globals';
 import { getByTestId } from '../../../testing/test-id';
 import { RegisterComponent } from './register.component';
 
-// Test d'intégration : vrai composant + vrai template + vrai AuthService.
-// On remplit le formulaire dans le DOM ; seul le back est simulé.
+// Intégration : composant, template et AuthService réels ; seul le back est simulé.
 describe('RegisterComponent (integration)', () => {
   let fixture: ComponentFixture<RegisterComponent>;
   let httpMock: HttpTestingController;
@@ -100,7 +99,6 @@ describe('RegisterComponent (integration)', () => {
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  // it.each : le même test lancé une fois par champ obligatoire
   it.each<Field>(['firstName', 'lastName', 'email', 'password'])(
     'should disable the submit button when %s is missing',
     (missingField: Field) => {

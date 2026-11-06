@@ -10,7 +10,7 @@ import { SessionService } from '../../../../core/service/session.service';
 import { queryAllByTestId } from '../../../../../testing/test-id';
 import { ListComponent } from './list.component';
 
-// Test d'intégration : vrai composant + vrai template + vrais SessionApiService et SessionService.
+// Intégration : composant, template, SessionApiService et SessionService réels ; seul le back est simulé.
 describe('ListComponent (integration)', () => {
   let fixture: ComponentFixture<ListComponent>;
   let httpMock: HttpTestingController;

@@ -10,8 +10,7 @@ import { SessionService } from '../../core/service/session.service';
 import { getByTestId, queryByTestId } from '../../../testing/test-id';
 import { LoginComponent } from './login.component';
 
-// Test d'intégration : vrai composant + vrai template + vrais AuthService et SessionService.
-// On remplit le formulaire dans le DOM comme un utilisateur ; seul le back est simulé.
+// Intégration : composant, template, AuthService et SessionService réels ; seul le back est simulé.
 describe('LoginComponent (integration)', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let httpMock: HttpTestingController;
@@ -28,12 +27,10 @@ describe('LoginComponent (integration)', () => {
     admin: true,
   };
 
-  // --- Petites aides pour manipuler le DOM ---
   // Champ du formulaire, retrouvé par son data-testid "login-<name>-field" (ex : login-email-field)
   const input = (name: 'email' | 'password'): HTMLInputElement =>
     getByTestId<HTMLInputElement>(fixture, `login-${name}-field`);
 
-  // Simule la saisie de l'utilisateur dans un champ
   const type = (name: 'email' | 'password', value: string): void => {
     input(name).value = value;
     input(name).dispatchEvent(new Event('input')); // prévient Angular qu'on a tapé
@@ -119,8 +116,7 @@ describe('LoginComponent (integration)', () => {
   });
 
   it('should highlight a required field in error when it is left empty', () => {
-    // Le champ est retrouvé par son data-testid ; on remonte ensuite à son cadre Material (mat-form-field),
-    // car c'est l'affichage d'erreur de Material (classe mat-form-field-invalid) que l'on vérifie ici.
+    // On vérifie l'état d'erreur affiché par Material, porté par le mat-form-field parent du champ.
     const emailField = (): HTMLElement => input('email').closest('mat-form-field')!;
     expect(emailField().classList).not.toContain('mat-form-field-invalid'); // pas encore touché
 

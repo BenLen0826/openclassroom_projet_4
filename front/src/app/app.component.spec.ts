@@ -6,13 +6,13 @@ import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { SessionService } from './core/service/session.service';
 
-// Test unitaire : SessionService est remplacé par un mock, on teste la logique de la classe
+// Unitaire : SessionService mocké.
 describe('AppComponent', () => {
   let component: AppComponent;
   let router: Router;
 
   const sessionServiceMock = {
-    $isLogged: jest.fn().mockReturnValue(of(false)), // renvoie un Observable qui émet false
+    $isLogged: jest.fn().mockReturnValue(of(false)),
     logOut: jest.fn(),
   };
 
@@ -28,7 +28,6 @@ describe('AppComponent', () => {
     }).compileComponents();
 
     router = TestBed.inject(Router);
-    // spyOn : on espionne la méthode navigate du VRAI Router, sans vraiment naviguer
     jest.spyOn(router, 'navigate').mockResolvedValue(true);
 
     component = TestBed.createComponent(AppComponent).componentInstance;

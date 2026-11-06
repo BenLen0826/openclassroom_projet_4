@@ -8,17 +8,14 @@ import { AuthGuard } from './auth.guard';
 describe('AuthGuard', () => {
   let guard: AuthGuard;
 
-  // Mocks : de faux objets qui ont juste ce dont le guard a besoin
   const sessionServiceMock = { isLogged: false };
-  const routerMock = { navigate: jest.fn() }; // fonction espion : enregistre ses appels
+  const routerMock = { navigate: jest.fn() };
 
   beforeEach(() => {
-    // Remet les compteurs de jest.fn() à zéro entre deux tests
     jest.clearAllMocks();
 
     TestBed.configureTestingModule({
       providers: [
-        // "quand quelqu'un demande SessionService, donne-lui mon mock"
         { provide: SessionService, useValue: sessionServiceMock },
         { provide: Router, useValue: routerMock },
       ],

@@ -13,8 +13,8 @@ import { SessionService } from '../../../../core/service/session.service';
 import { getByTestId, queryByTestId } from '../../../../../testing/test-id';
 import { DetailComponent } from './detail.component';
 
-// Test d'intégration : vrai composant + vrai template + vrais SessionApiService, TeacherService
-// et SessionService. Seuls le back (HttpTestingController) et l'URL (ActivatedRoute) sont simulés.
+// Intégration : composant, template, SessionApiService, TeacherService et SessionService réels ;
+// seuls le back (HttpTestingController) et l'URL (ActivatedRoute) sont simulés.
 describe('DetailComponent (integration)', () => {
   let fixture: ComponentFixture<DetailComponent>;
   let httpMock: HttpTestingController;

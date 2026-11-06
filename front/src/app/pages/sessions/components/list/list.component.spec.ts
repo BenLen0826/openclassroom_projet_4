@@ -8,7 +8,7 @@ import { SessionApiService } from '../../../../core/service/session-api.service'
 import { SessionService } from '../../../../core/service/session.service';
 import { ListComponent } from './list.component';
 
-// Test unitaire : SessionApiService et SessionService sont mockés.
+// Unitaire : SessionApiService et SessionService mockés.
 describe('ListComponent', () => {
   let component: ListComponent;
   let fixture: ComponentFixture<ListComponent>;
