@@ -22,7 +22,7 @@ describe('FormComponent', () => {
     id: 1,
     name: 'Yoga du matin',
     description: 'Séance douce',
-    date: new Date('2026-11-10T10:00:00Z'),
+    date: new Date('2026-11-10T12:00:00Z'),
     teacher_id: 2,
     users: [],
   };

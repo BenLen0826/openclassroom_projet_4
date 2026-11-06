@@ -25,11 +25,11 @@ describe('DetailComponent (integration)', () => {
     id: 1,
     name: 'yoga du matin',
     description: 'Séance douce pour bien commencer la journée',
-    date: new Date('2026-11-10T10:00:00Z'),
+    date: new Date('2026-11-10T12:00:00Z'),
     teacher_id: 2,
     users: [4, 5],
-    createdAt: new Date('2026-10-01T10:00:00Z'),
-    updatedAt: new Date('2026-10-15T10:00:00Z'),
+    createdAt: new Date('2026-10-01T12:00:00Z'),
+    updatedAt: new Date('2026-10-15T12:00:00Z'),
   };
   const teacher: Teacher = {
     id: 2,
