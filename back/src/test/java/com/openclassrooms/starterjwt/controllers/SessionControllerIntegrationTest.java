@@ -151,6 +151,22 @@ class SessionControllerIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
+    @DisplayName("POST /api/session sans professeur renvoie 400 et ne crée pas de session")
+    void create_shouldReturn400_whenTeacherIdIsMissing() throws Exception {
+        // Given : @NotNull sur SessionDto.teacher_id (le professeur est obligatoire dans le formulaire)
+        SessionDto body = sessionBody("Yoga du matin", null);
+
+        // When + Then
+        mockMvc.perform(post("/api/session")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(body)))
+                .andExpect(status().isBadRequest());
+
+        assertEquals(0, sessionRepository.count());
+    }
+
+    @Test
     @DisplayName("POST /api/session avec un professeur inconnu renvoie 404 et ne crée pas de session")
     void create_shouldReturn404_whenTeacherDoesNotExist() throws Exception {
         mockMvc.perform(post("/api/session")
