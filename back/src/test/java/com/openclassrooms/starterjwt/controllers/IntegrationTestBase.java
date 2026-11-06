@@ -9,13 +9,13 @@ import com.openclassrooms.starterjwt.repository.TeacherRepository;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
 import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,9 +35,11 @@ import java.util.Date;
 @SpringBootTest
 // Fournit MockMvc : il envoie de vraies requêtes HTTP à l'application, sans démarrer de serveur réseau.
 @AutoConfigureMockMvc
-// Chaque test s'exécute dans une transaction annulée (rollback) à la fin : la base est vide au début de chaque test.
-// ⚠️ Les ids auto-incrémentés, eux, ne repartent pas à 1 : ne jamais écrire un id en dur dans un test.
-@Transactional
+// Pas de @Transactional sur les tests : chaque requête MockMvc utilise ses propres transactions, comme en production.
+// Avec @Transactional, la transaction du test englobait aussi la requête : Hibernate enregistrait alors
+// automatiquement les objets modifiés, et un test passait même si le service oubliait d'appeler save().
+// La base est donc vidée avant chaque test (voir cleanDatabase).
+// ⚠️ Les ids auto-incrémentés ne repartent pas à 1 : ne jamais écrire un id en dur dans un test.
 public abstract class IntegrationTestBase {
 
     /** Id qui n'existe jamais en base : utilisé pour tester les cas 404. */
@@ -69,6 +71,19 @@ public abstract class IntegrationTestBase {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    /**
+     * Vide la base avant chaque test, pour que chaque test démarre d'une base vide et ne dépende pas des autres.
+     * JUnit exécute ce @BeforeEach avant ceux des classes filles.
+     * Ordre imposé par les clés étrangères : d'abord les sessions (avec leurs participations), puis les
+     * professeurs et les utilisateurs qu'elles référencent.
+     */
+    @BeforeEach
+    void cleanDatabase() {
+        sessionRepository.deleteAll();
+        teacherRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 
     // ---------- création de données en base ----------
 
