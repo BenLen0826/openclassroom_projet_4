@@ -68,7 +68,8 @@ L'application a besoin des deux parties : le front envoie ses requêtes `/api` a
 
 ## 4. Lancer les tests et générer les rapports de couverture
 
-Chaque commande de couverture **échoue si un indicateur est inférieur à 80 %**.
+La commande qui génère chaque rapport de couverture **échoue si un indicateur est inférieur à 80 %** :
+`mvn clean verify` pour le back, `npm run test:coverage` pour Jest, `npm run e2e:coverage` pour Cypress.
 
 | Partie | Tests | Dossier | Commande (tests + rapport de couverture) | Rapport de couverture |
 |---|---|---|---|---|
@@ -89,7 +90,7 @@ Remarques :
 
 | Partie | Tests | Dont intégration | Instructions / Statements | Branches | Lignes | Méthodes / Functions |
 |---|---|---|---|---|---|---|
-| Back (JaCoCo) | 101 | 38 (37,6 %) | 99,9 % | 98,5 % | 100 % | 100 % |
+| Back (JaCoCo) | 102 | 39 (38,2 %) | 99,9 % | 98,5 % | 100 % | 100 % |
 | Front, Jest | 115 | 45 (39,1 %) | 94,8 % | 100 % | 94,3 % | 100 % |
 | Front, Cypress (E2E) | 37 | — | 99,5 % | 98,1 % | 99,4 % | 100 % |
 

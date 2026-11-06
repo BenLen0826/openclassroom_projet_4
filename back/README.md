@@ -131,7 +131,7 @@ les tests d'intégration utilisent une base **H2 en mémoire**, configurée dans
 | Type | Fichiers | Principe |
 |---|---|---|
 | Unitaires | `src/test/java/**/*Test.java` (services, mappers, sécurité) | Une seule classe testée, ses dépendances sont remplacées par des mocks Mockito. Spring n'est pas démarré. |
-| Intégration | `src/test/java/**/controllers/*IntegrationTest.java` | Application complète démarrée (`@SpringBootTest`), requêtes HTTP envoyées avec `MockMvc`, vrai token JWT, base H2. Chaque test est annulé (rollback) à la fin. |
+| Intégration | `src/test/java/**/controllers/*IntegrationTest.java` | Application complète démarrée (`@SpringBootTest`), requêtes HTTP envoyées avec `MockMvc`, vrai token JWT, base H2. Les requêtes utilisent leurs propres transactions, comme en production ; la base est vidée avant chaque test. |
 
 Les tests d'intégration héritent de `controllers/IntegrationTestBase`, qui fournit `MockMvc`, les repositories,
 des méthodes de création de données (`createUser`, `createTeacher`, `createSession`) et `bearer(user)` pour obtenir un token JWT.
@@ -157,6 +157,10 @@ mvn test -Dtest="!*IntegrationTest"
 mvn test -Dtest="SessionServiceTest"
 mvn test -Dtest="SessionServiceTest#participate*"
 ```
+
+> Sous Git Bash, bash ou zsh, le `!` placé entre guillemets doubles est interprété par le terminal :
+> utiliser des guillemets simples, `mvn test -Dtest='!*IntegrationTest'`.
+> Les guillemets doubles fonctionnent tels quels sous PowerShell et cmd.
 
 ### Rapports
 
