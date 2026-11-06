@@ -43,7 +43,7 @@ With coverage (fails if any indicator is below 80 %):
 
 > npm run test:coverage
 
-Reports: `front/coverage/jest/lcov-report/index.html` (coverage) and `front/coverage/jest/test-report.html` (results).
+Reports: `front/coverage/jest/index.html` (coverage) and `front/coverage/jest/test-report.html` (results).
 
 Watch mode:
 
