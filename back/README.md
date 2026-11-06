@@ -16,7 +16,7 @@ Backend de l'application Yoga App !.
     -> Maven 3.9.3 (https://archive.apache.org/dist/maven/maven-3/3.9.3/binaries/) ou plus
 
 ## Démarrage du back
-Pour démarrer le back, il :
+Pour démarrer le back, il faut :
 - démarrer Docker-Desktop sur votre poste de travail local.
 - lancer une console, se placer à la racine du projet et exécuter la commande Maven :
 ```
@@ -119,6 +119,53 @@ Dans l'onglet ```Exec```, il faut :
 La capture d'écran ci-dessous résume les étapes précédentes :
 
 ![2-docker-desktop-bdd](pictures/2-docker-desktop-bdd.png)
+
+
+## Tests
+
+Les tests du back utilisent **JUnit 5**, **Mockito** et **Spring Boot Test**. Ils n'ont besoin ni de Docker ni de MySQL :
+les tests d'intégration utilisent une base **H2 en mémoire**, configurée dans `src/test/resources/application.yml`.
+
+### Organisation
+
+| Type | Fichiers | Principe |
+|---|---|---|
+| Unitaires | `src/test/java/**/*Test.java` (services, mappers, sécurité) | Une seule classe testée, ses dépendances sont remplacées par des mocks Mockito. Spring n'est pas démarré. |
+| Intégration | `src/test/java/**/controllers/*IntegrationTest.java` | Application complète démarrée (`@SpringBootTest`), requêtes HTTP envoyées avec `MockMvc`, vrai token JWT, base H2. Chaque test est annulé (rollback) à la fin. |
+
+Les tests d'intégration héritent de `controllers/IntegrationTestBase`, qui fournit `MockMvc`, les repositories,
+des méthodes de création de données (`createUser`, `createTeacher`, `createSession`) et `bearer(user)` pour obtenir un token JWT.
+
+Les packages `dto` et `payload` (objets de transport de données) ne sont pas testés et sont exclus du rapport de couverture.
+
+### Lancer les tests
+
+Tous les tests :
+```
+mvn clean test
+```
+
+Tous les tests + vérification de la couverture (échoue si un indicateur est inférieur à 80 %) :
+```
+mvn clean verify
+```
+
+Uniquement les tests d'intégration · uniquement les autres tests · une seule classe · un seul test :
+```
+mvn test -Dtest="*IntegrationTest"
+mvn test -Dtest="!*IntegrationTest"
+mvn test -Dtest="SessionServiceTest"
+mvn test -Dtest="SessionServiceTest#participate*"
+```
+
+### Rapports
+
+- Couverture de code (JaCoCo), générée par `mvn clean test` ou `mvn clean verify` :
+  > target/site/jacoco/index.html
+
+  ![rapport-couverture-jacoco](pictures/3-rapport-couverture-jacoco.png)
+- Résultats détaillés des tests (Surefire) :
+  > target/surefire-reports/
 
 
 ## Ressources
