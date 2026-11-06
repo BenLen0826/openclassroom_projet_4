@@ -1,19 +1,4 @@
-// ***********************************************************
-// This example support/index.js is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
-
-// When a command from ./commands is ready to use, import with `import './commands'` syntax
+// Chargé avant chaque fichier de test : commandes du projet et collecte de la couverture de code.
 import './commands';
 
 import '@cypress/code-coverage/support';
