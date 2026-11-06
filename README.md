@@ -74,7 +74,7 @@ La commande qui génère chaque rapport de couverture **échoue si un indicateur
 | Partie | Tests | Dossier | Commande (tests + rapport de couverture) | Rapport de couverture |
 |---|---|---|---|---|
 | Back | unitaires + intégration (JUnit 5, Mockito, Spring Boot Test, base H2 en mémoire) | `back/` | `mvn clean verify` | `back/target/site/jacoco/index.html` |
-| Front | unitaires + intégration (Jest) | `front/` | `npm run test:coverage` | `front/coverage/jest/lcov-report/index.html` |
+| Front | unitaires + intégration (Jest) | `front/` | `npm run test:coverage` | `front/coverage/jest/index.html` |
 | Front | end-to-end (Cypress) | `front/` | `npm run e2e:ci` puis `npm run e2e:coverage` | `front/coverage/lcov-report/index.html` |
 
 Remarques :
